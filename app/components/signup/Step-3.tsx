@@ -1,103 +1,89 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../CustomButton";
 import Input from "../CustomInput";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const Step3 = ({
-  setter,
-  activeStep,
-  handler,
-  state,
-}: {
-  state: {
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    dob: string;
+const Step3 = ({ state }: { state: { email: string; phone: string } }) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState("");
+  const sendEmail = async () => {
+    try {
+      // Sending Code
+      const resp = await fetch("/api/auth/send-email", {
+        method: "POST",
+        body: JSON.stringify({
+          email: state.email,
+        }),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        toast.success("Email Resent successfully!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+    }
   };
-  handler: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setter: (step: number) => void;
-  activeStep: number;
-}) => {
+  const verifyAccount = async () => {
+    if (code.length !== 6) {
+      return toast.error("Code must be 6 digits long");
+    }
+    setLoading(true);
+    try {
+      // Sending Code
+      const resp = await fetch("/api/user/verify", {
+        method: "POST",
+        body: JSON.stringify({
+          email: state.email,
+          code,
+        }),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        router.push("/sign-in");
+        toast.success("Account verified successfully!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="mt-4">
-      <h3 className="text-2xl font-bold mb-8">Personal Details</h3>
+      <h3 className="text-2xl font-bold mb-8">Account Verification</h3>
       <div className="mt-4">
-        <div className="flex gap-2 justify-between mt-4">
-          <Input
-            type="text"
-            hint={"John"}
-            label={"First Name"}
-            name={"firstName"}
-            classes="w-1/2"
-            value={state.firstName}
-            handler={handler}
-          />
-          <Input
-            type="text"
-            hint={"Doe"}
-            label={"Last Name"}
-            name={"lastName"}
-            classes="w-1/2"
-            value={state.lastName}
-            handler={handler}
-          />
-        </div>
-        <div className="flex gap-2 justify-between mt-4">
-          <Input
-            type="text"
-            hint={"Johnboe12"}
-            label={"Username"}
-            value={state.username}
-            handler={handler}
-            name={"username"}
-          />
-          <Input
-            type="date"
-            hint={"YYYY-MM-DD"}
-            label={"Date of Birth"}
-            value={state.dob}
-            handler={handler}
-            name={"dob"}
-            classes="w-1/2"
-          />
-        </div>
-        <div className="flex gap-2 justify-between mt-4">
-          <Input
-            type="password"
-            hint={"********"}
-            label={"Password"}
-            value={state.password}
-            handler={handler}
-            name={"password"}
-          />
-          <Input
-            type="password"
-            hint={"********"}
-            label={"Confirm Password"}
-            value={state.confirmPassword}
-            handler={handler}
-            name={"confirmPassword"}
-          />
-        </div>
+        <Input
+          type="text"
+          hint={"Enter verification code"}
+          label={"Verification Code"}
+          value={code}
+          handler={(e) => {
+            if (e.target.value.length <= 6) {
+              setCode(e.target.value);
+            }
+          }}
+          name={"text"}
+          classes="!w-1/2 mb-4"
+        />
       </div>
-     
+      <button onClick={sendEmail} className="text-xs small text-n-2">
+        Resend
+      </button>
       <Button
-        disabled={
-          !state.username ||
-          !state.firstName ||
-          !state.dob ||
-          !state.password ||
-          !state.confirmPassword ||
-          !state.lastName
-        }
+        loading={loading}
+        disabled={loading}
         className="!w-1/2 !block !mx-auto !mt-8 !py-4"
-        onClick={() => setter(4)}
+        onClick={verifyAccount}
         white
       >
-        Next
+        Verify
       </Button>
     </div>
   );

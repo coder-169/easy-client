@@ -1,18 +1,15 @@
-'use client'
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { contractABI, contractAddress } from "../utils/constants";
 
-export const TransactionContext = React.createContext();
-const provider = new ethers.AlchemyProvider(
-  "sepolia",
-  "vqpCd47FrQL_TBwuKXJOK2oOCr123yr-"
-);
-const createEthereumContract =async () => {
-  // const provider = new ethers.providers.Web3Provider(ethereum);
-  const signer = await provider.getSigner();
-  console.log(signer)
+export const TransactionContext = React.createContext({});
+
+const ethereum = window.ethereum;
+
+const createEthereumContract = () => {
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  const signer = provider.getSigner();
   const transactionsContract = new ethers.Contract(contractAddress, contractABI, signer);
 
   return transactionsContract;
@@ -34,7 +31,7 @@ export const TransactionsProvider = ({ children }) => {
       if (ethereum) {
         const transactionsContract = createEthereumContract();
 
-        const availableTransactions = await transactionsContract.get();
+        const availableTransactions = await transactionsContract.getAllTransactions();
 
         const structuredTransactions = availableTransactions.map((transaction) => ({
           addressTo: transaction.receiver,
@@ -74,20 +71,20 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
-  // const checkIfTransactionsExists = async () => {
-  //   try {
-  //     if (ethereum) {
-  //       const transactionsContract = createEthereumContract();
-  //       const currentTransactionCount = await transactionsContract.getTransactionCount();
+  const checkIfTransactionsExists = async () => {
+    try {
+      if (ethereum) {
+        const transactionsContract = createEthereumContract();
+        const currentTransactionCount = await transactionsContract.getTransactionCount();
 
-  //       window.localStorage.setItem("transactionCount", currentTransactionCount);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
+        window.localStorage.setItem("transactionCount", currentTransactionCount);
+      }
+    } catch (error) {
+      console.log(error);
 
-  //     throw new Error("No ethereum object");
-  //   }
-  // };
+      throw new Error("No ethereum object");
+    }
+  };
 
   const connectWallet = async () => {
     try {
@@ -109,7 +106,7 @@ export const TransactionsProvider = ({ children }) => {
       if (ethereum) {
         const { addressTo, amount, keyword, message } = formData;
         const transactionsContract = createEthereumContract();
-        const parsedAmount = ethers.parseEther(amount);
+        const parsedAmount = ethers.utils.parseEther(amount);
 
         await ethereum.request({
           method: "eth_sendTransaction",
@@ -145,7 +142,7 @@ export const TransactionsProvider = ({ children }) => {
 
   useEffect(() => {
     checkIfWalletIsConnect();
-    // checkIfTransactionsExists();
+    checkIfTransactionsExists();
   }, [transactionCount]);
 
   return (

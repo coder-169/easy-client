@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
@@ -11,14 +11,8 @@ import { Loader2Icon } from "lucide-react";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
-    dob: "",
-    id_number: "",
+  const [passwords, setPasswords] = useState({
+    newPassword: "",
     confirmPassword: "",
   });
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +47,7 @@ const Page = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +77,6 @@ const Page = () => {
 
   const [code, setCode] = useState("");
   const [email, setEmail] = useState("");
-  const [passwords, setPasswords] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   return (
@@ -129,16 +122,16 @@ const Page = () => {
                 hint={"New Password"}
                 // label={"Login Id"}
                 name={"newPassword"}
-                value={email}
-                handler={(e) => setEmail(e.target.value)}
+                value={passwords.newPassword}
+                handler={onChangeHandler}
               />
               <CustomInput
                 type="password"
                 hint={"Confirm Password"}
                 // label={"Login Id"}
                 name={"confirmPassword"}
-                value={email}
-                handler={(e) => setEmail(e.target.value)}
+                value={passwords.confirmPassword}
+                handler={onChangeHandler}
               />
             </div>
           )}

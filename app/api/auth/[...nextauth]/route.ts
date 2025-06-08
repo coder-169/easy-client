@@ -33,12 +33,9 @@ const handler = NextAuth({
         if (!credentials.username || !credentials.password) {
           throw new Error("Missing credentials");
         }
-        console.log("her");
+        console.log("her", credentials);
         const user = await User.findOne({
-          $or: [
-            { email: { $regex: credentials.username, $options: "i" } },
-            { username: { $regex: credentials.username, $options: "i" } },
-          ],
+          username: { $regex: credentials.username, $options: "i" },
         });
         console.log("user", user);
         if (!user) {
@@ -72,6 +69,8 @@ const handler = NextAuth({
       session: { user: { email: string; name: string } };
     }) {
       await dbConnect();
+
+      // Enhanced pipeline to get complete user data with account info
       const pipeline = [
         {
           $match: {
@@ -80,49 +79,44 @@ const handler = NextAuth({
         },
         {
           $lookup: {
-            from: "accounts", // The collection name for accounts
-            localField: "_id", // The `_id` field in the User collection
-            foreignField: "accountId", // The `accountId` field in the Account collection
-            as: "userAccount", // The name of the joined field
+            from: "accounts", // The collection to join
+            localField: "_id", // User's _id
+            foreignField: "accountId", // Account's accountId (linked to user._id)
+            as: "userAccount",
           },
         },
         {
           $unwind: {
             path: "$userAccount",
-            preserveNullAndEmptyArrays: false, // Ensures only users with accounts are returned
+            preserveNullAndEmptyArrays: false, // Only include users with accounts
+          },
+        },
+        {
+          $replaceRoot: {
+            newRoot: {
+              $mergeObjects: ["$userAccount", "$$ROOT"], // Merge account first (account fields will overwrite if names clash)
+            },
           },
         },
         {
           $project: {
-            _id: 1,
-            email: 1,
-            name: 1,
-            accountType: "$userAccount.accountType",
-            balancePkr: "$userAccount.balancePkr",
-            balanceEth: "$userAccount.balanceEth",
-            interestRate: "$userAccount.interestRate",
-            createdAt: "$userAccount.createdAt",
-            updatedAt: "$userAccount.updatedAt",
+            userAccount: 0, // Remove the redundant array
           },
         },
       ];
-      const result = await User.findOne({
-        $or: [{ email: session.user.email }, { name: session.user.name }],
-      });
+
+      const result = await User.aggregate(pipeline).exec();
 
       if (!result) {
-        throw new Error("User or account not found");
-      }
-
-      console.log("User with Account:", result);
-      // const existingUser = await User.findOne({
-      //   $or: [{ email: session.user.email }, { name: session.user.name }],
-      // });
-      if (result) {
-        session.user = result;
-      } else {
         throw new Error("User not found");
       }
+
+      // Merge all data into the session.user object
+      session.user = {
+        ...session.user, // Keep original session data
+        ...result[0], // Add all the user and account data
+      };
+
       return session;
     },
     async signIn({ user, profile, account }) {

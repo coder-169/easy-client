@@ -1,9 +1,7 @@
-import type { Metadata } from "next"
+import type { Metadata } from "next";
 import "./globals.css";
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "sonner";
 import AuthProvider from "./context/AuthContext";
-
-
 
 export const metadata: Metadata = {
   title: "Easy Krypt",
@@ -19,11 +17,8 @@ export default function RootLayout({
     <html lang="en">
       {/* <TransactionsProvider> */}
       <AuthProvider>
-
-        <body
-          className={` antialiased`}
-        >
-          <Toaster position="bottom-center"/>
+        <body className={` antialiased`}>
+          <Toaster position="bottom-right" />
           {children}
         </body>
       </AuthProvider>

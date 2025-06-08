@@ -8,6 +8,7 @@ const CustomInput = ({
   value,
   step,
   handler,
+  readOnly,
   label,
 }: InputProps) => (
   <div className="inline-block w-full">
@@ -18,7 +19,7 @@ const CustomInput = ({
       {label}
     </label>
     <input
-      className={`bg-transparent bg-opacity-30 w-full text-n-2 p-3 font-semibold rounded-lg border block border-n-6   focus:border-n-4 !outline-none  !ring-0 transition-all  duration-300 ease-in text-sm ${classes}`}
+      className={`bg-transparent bg-opacity-30 w-full text-n-1 p-3 font-semibold rounded-lg border block border-n-6   focus:border-n-4 !outline-none  !ring-0 transition-all  duration-300 ease-in text-sm ${classes}`}
       autoComplete="off"
       placeholder={hint}
       type={type}
@@ -27,6 +28,7 @@ const CustomInput = ({
       step={step}
       value={value}
       onChange={handler}
+      readOnly={readOnly}
     />
   </div>
 );

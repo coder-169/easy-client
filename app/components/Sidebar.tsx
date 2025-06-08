@@ -10,8 +10,9 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { PiArrowsCounterClockwiseFill } from "react-icons/pi";
 import { signOut, useSession } from "next-auth/react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Button from "./CustomButton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -50,7 +51,6 @@ const Sidebar = () => {
             </Link>
           </li>
 
-       
           <li>
             <Link
               href={"/convert"}
@@ -77,7 +77,7 @@ const Sidebar = () => {
               <LiaMoneyBillSolid /> Transactions{" "}
             </Link>
           </li>
-             <li>
+          <li>
             <Link
               href={"/your-cards"}
               className={`${
@@ -92,7 +92,9 @@ const Sidebar = () => {
           </li>
         </ul>
       </nav>
-      {status === "authenticated" ? (
+      {status === "loading" ? (
+        <Skeleton className="ml-6 h-10 w-[270px]" />
+      ) : status === "authenticated" ? (
         <div className="flex items-center justify-between mx-4 mb-8 gap-2">
           <div className="flex items-center gap-2">
             <Image

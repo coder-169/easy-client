@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const AccountBar = ({
@@ -9,66 +10,67 @@ const AccountBar = ({
 }) => {
   return (
     <div>
-      <h3 className="text-4xl text-n-1 font-bold mb-12 text-center">Sign Up</h3>
+      <h3 className="text-4xl text-n-1 font-bold mb-4 text-center">Sign Up</h3>
+      <p className="text-sm font-normal text-n-3 mb-8 text-center">
+        {"Already have an account?"}
+        <Link
+          href={"/sign-in"}
+          className="text-blue-400 hover:text-blue-500 transition-all duration-200"
+        >
+          {" "}
+          Sign In
+        </Link>
+      </p>
       <div className="flex items-center justify-between gap-4 mb-8">
-        {/* Account Type */}
-        <div className="w-1/3 flex items-center gap-2">
+        {/* Step 1 */}
+        <div className="flex items-center w-full">
           <span
             onClick={() => setter(1)}
-            className={`${activeStep > 0 ? "font-normal bg-white text-black" : "text-white font-medium  bg-n-6"} cursor-pointer  rounded-full w-8 h-7 flex items-center justify-center`}
+            className={`${
+              activeStep > 0
+                ? "font-normal bg-white text-black"
+                : "text-white font-medium bg-n-6"
+            } cursor-pointer rounded-full w-8 h-7 flex items-center justify-center`}
           >
             1
           </span>
           <div
-            className={`w-full ${activeStep > 1 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
-              } rounded-full`}
+            className={`flex-1 ${
+              activeStep > 1 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
+            } ml-4`}
           />
         </div>
-        {/* Cnic Details */}
-        <div className="w-1/3 flex items-center gap-4">
+
+        {/* Step 2 */}
+        <div className="flex items-center w-full">
           <span
             onClick={() => setter(2)}
-            className={`${activeStep > 1 ? "font-normal bg-white text-black" : "text-white font-medium  bg-n-6"} cursor-pointer  rounded-full w-8 h-7 flex items-center justify-center`}
+            className={`${
+              activeStep > 1
+                ? "font-normal bg-white text-black"
+                : "text-white font-medium bg-n-6"
+            } cursor-pointer rounded-full w-8 h-7 flex items-center justify-center`}
           >
             2
           </span>
           <div
-            className={`w-full ${activeStep > 2 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
-              } rounded-full`}
+            className={`flex-1 ${
+              activeStep > 2 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
+            } ml-4`}
           />
         </div>
-        {/* Personal Details */}
-        <div className="w-1/3 flex items-center gap-4">
+
+        {/* Step 3 */}
+        <div className="flex items-center">
           <span
             onClick={() => setter(3)}
-            className={`${activeStep > 2 ? "font-normal bg-white text-black" : "text-white font-medium  bg-n-6"} cursor-pointer  rounded-full w-8 h-7 flex items-center justify-center`}
+            className={`${
+              activeStep > 2
+                ? "font-normal bg-white text-black"
+                : "text-white font-medium bg-n-6"
+            } cursor-pointer rounded-full w-8 h-7 flex items-center justify-center`}
           >
             3
-          </span>
-          <div
-            className={`w-full ${activeStep > 3 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
-              } rounded-full`}
-          />
-        </div>
-        <div className="w-1/3 flex items-center gap-4">
-          <span
-            onClick={() => setter(4)}
-            className={`${activeStep > 3 ? "font-normal bg-white text-black" : "text-white font-medium  bg-n-6"} cursor-pointer  rounded-full w-8 h-7 flex items-center justify-center`}
-          >
-            4
-          </span>
-          <div
-            className={`w-full ${activeStep > 4 ? "bg-n-1 h-[2px]" : "bg-gray-700 h-[1px]"
-              } rounded-full`}
-          />
-        </div>
-        {/*  Extras */}
-        <div className="w-max flex items-center gap-4">
-          <span
-            onClick={() => setter(5)}
-            className={`${activeStep > 4 ? "font-normal bg-white text-black" : "text-white font-medium  bg-n-6"} cursor-pointer  rounded-full w-7 h-7 flex items-center justify-center`}
-          >
-            5
           </span>
         </div>
       </div>

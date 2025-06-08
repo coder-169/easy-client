@@ -5,7 +5,7 @@ import Input from "./CustomInput";
 import Button from "./Button";
 import Logo from "./Logo";
 import { signIn } from "next-auth/react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState({

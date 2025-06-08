@@ -6,6 +6,7 @@ declare type InputProps = {
   name: string;
   value: string;
   step?: string;
+  readOnly?: boolean;
   classes?: string;
   handler?: (e: any) => void;
 };
@@ -79,14 +80,9 @@ declare type Transaction = {
   _id: string;
   name: string;
   email: string;
-  t_name: string;
   amount: number;
   status: string;
-  category: string;
-  date: string;
-  type: string;
   $createdAt: string;
-  currency: string;
   senderAcc: string;
   receiverAcc: string;
 };

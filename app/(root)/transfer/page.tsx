@@ -1,14 +1,15 @@
 "use client";
-import { Loader } from "@/app/components";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Heading from "@/app/components/Heading";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
 import { Loader2 } from "lucide-react";
+import { TransactionContext } from "@/app/context/TransactionContext";
+import { getSession } from "next-auth/react";
 
 const Page = () => {
-  // const { handleChange, isLoading } = useContext(TransactionContext);
+  const { sendTransaction } = useContext(TransactionContext);
   const [isLoading, setIsLoading] = useState(false);
   const [currency, setCurrency] = useState("");
   const [transfer, setTransfer] = useState({
@@ -17,39 +18,63 @@ const Page = () => {
     email: "",
     message: "",
   });
+  const [account, setAccount] = useState({
+    amount: "",
+    account: "",
+    email: "",
+  });
 
   const handleChange = (e) => {
     setTransfer({ ...transfer, [e.target.name]: e.target.value });
   };
+
+  const handleAccountChange = (e) => {
+    setAccount({ ...account, [e.target.name]: e.target.value });
+  };
+
   const handleTransfer = async () => {
     toast.loading("Processing Transaction", { duration: 1500 });
     setIsLoading(true);
     try {
+      const fastSession = await getSession();
       if (currency.toLowerCase() === "eth") {
-        const resp = await fetch("/api/user/payment/transfer", {
-          method: "post",
-          body: JSON.stringify({
-            ...transfer,
-            address: transfer.account,
-            currency,
-          }),
-        });
-        const data = await resp.json();
-        console.log(data);
-        if (data.success) toast.success("Transaction Processed");
-        else toast.error("Transaction failed");
+        sendTransaction();
+        // const resp = await fetch("/api/user/payment/transfer", {
+        //   method: "post",
+        //   body: JSON.stringify({
+        //     ...transfer,
+        //     address: transfer.account,
+        //     currency,
+        //   }),
+        // });
+        // const data = await resp.json();
+        // console.log(data);
+        // if (data.success) toast.success("Transaction Processed");
+        // else toast.error("Transaction failed");
       } else {
         const resp = await fetch("/api/user/payment/transfer", {
           method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            id: fastSession?.user?._id || "",
+          },
           body: JSON.stringify({
-            ...transfer,
-            currency,
-            account: transfer.account,
+            ...account,
+            sender: fastSession?.user?.username,
           }),
         });
         const data = await resp.json();
-        if (data.success) toast.success("Transaction Processed");
-        else toast.error("Transaction failed");
+
+        if (data.success) {
+          toast.success(data.message);
+          setAccount({
+            amount: "",
+            account: "",
+            email: "",
+          });
+        } else {
+          toast.error(data.message);
+        }
       }
     } catch (error) {
       toast.error((error as Error).message);
@@ -77,7 +102,8 @@ const Page = () => {
         {/* ETH Button */}
         <button
           onClick={() => setCurrency("eth")}
-          className={`relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
+          disabled={isLoading}
+          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
             currency === "eth" ? "text-white" : "text-n-2"
           }`}
         >
@@ -87,7 +113,8 @@ const Page = () => {
         {/* PKR Button */}
         <button
           onClick={() => setCurrency("pkr")}
-          className={`relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
+          disabled={isLoading}
+          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
             currency === "pkr" ? "text-white" : "text-n-2"
           }`}
         >
@@ -98,7 +125,13 @@ const Page = () => {
       <h2 className="text-2xl font-semibold mt-8 text-n-1">Transfer Details</h2>
       <p className="text-sm text-n-4">Enter the details</p>
 
-      <div className="flex gap-4 items-center py-4">
+      <div
+        className={`${
+          currency === "pkr"
+            ? "opacity-80 pointer-events-none cursor-not-allowed"
+            : ""
+        } flex gap-4 items-center py-4`}
+      >
         <div className="w-1/3">
           <h3 className="text-base font-semibold text-n-1">
             Transfer Note(optional)
@@ -114,6 +147,7 @@ const Page = () => {
           onChange={handleChange}
           name="message"
           autoComplete="off"
+          readOnly={currency === "pkr"}
           className={`resize-none w-2/4 bg-transparent bg-opacity-30 px-3 rounded-xl border block focus:border-n-4 !outline-none border-n-6  transition-all !ring-0 duration-300 ease-in text-base text-n-1`}
           placeholder={
             "Dear John, I hope this message finds you well, I am transferring $100 to your account. Lmk when you receive.</div>"
@@ -224,8 +258,8 @@ const Page = () => {
             <CustomInput
               type="email"
               hint="johnboe@gmail.com"
-              value={transfer.email}
-              handler={handleChange}
+              value={account.email}
+              handler={handleAccountChange}
               name="email"
               classes="!w-2/4"
             />
@@ -239,44 +273,53 @@ const Page = () => {
             <CustomInput
               type="text"
               hint="1193243281813"
-              value={transfer.account}
-              handler={handleChange}
+              value={account.account}
+              handler={handleAccountChange}
               name="account"
               classes="!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s Amount
-              </h3>
+              <h3 className="text-base font-medium text-n-3">Amount</h3>
             </div>
             <CustomInput
               type="number"
               hint="20000"
-              value={transfer.amount}
-              handler={handleChange}
+              value={account.amount}
+              handler={handleAccountChange}
               name="amount"
               classes="!w-2/4"
             />
           </div>
-          <Button
-            white
-            disabled={
-              !transfer.email ||
-              !transfer.account ||
-              !transfer.amount ||
-              isLoading
-            }
-          >
-            {isLoading ? (
-              <span className="flex justify-between items-center gap-4">
-                Sending <Loader2 className="animate-spin size-4" />
-              </span>
-            ) : (
-              "Send now"
-            )}
-          </Button>
+          {currency === "eth" ? (
+            <Button
+              white
+              disabled={
+                !transfer.email ||
+                !transfer.account ||
+                !transfer.amount ||
+                isLoading
+              }
+              onClick={handleTransfer}
+            >
+              Send
+            </Button>
+          ) : (
+            <Button
+              white
+              loading={isLoading}
+              disabled={
+                !account.email ||
+                !account.account ||
+                !account.amount ||
+                isLoading
+              }
+              onClick={handleTransfer}
+            >
+              Send
+            </Button>
+          )}
         </div>
       </div>
     </div>

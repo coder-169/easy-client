@@ -1,110 +1,8 @@
 "use client";
-// import React from "react";
-// import { HiMenuAlt4 } from "react-icons/hi";
-// import { AiOutlineClose } from "react-icons/ai";
-// import Link from "next/link";
-// import Button from "./Button";
-// import Image from "next/image";
-// import { useSession } from "next-auth/react";
-// import { FaUser } from "react-icons/fa";
-
-// const NavBarItem = ({
-//   title,
-//   classes,
-//   href,
-// }: {
-//   title: string;
-//   classes?: string;
-//   href: string;
-// }) => (
-//   <li className={`mx-4 cursor-pointer ${classes}`}>
-//     <Link className="font-medium" href={href.toLowerCase()}>
-//       {title}
-//     </Link>
-//   </li>
-// );
-
-// const Navbar = () => {
-//   const [toggleMenu, setToggleMenu] = React.useState(false);
-//   const { status } = useSession();
-//   return (
-//     <nav className="w-full flex md:justify-center sticky top-0 bg-white shadow-sm justify-between items-center p-4">
-//       <div className="md:flex-[0.5] flex-initial justify-center items-center">
-//         <Image
-//           width={250}
-//           height={80}
-//           src={"/logo-light.png"}
-//           alt="logo"
-//           className="h-auto invert cursor-pointer"
-//         />
-//       </div>
-//       <ul className="text-black md:flex hidden list-none flex-row justify-between items-center flex-initial">
-//         {["Transfer", "Withdraw", "Convert", "Transactions"].map(
-//           (item, index) => (
-//             <NavBarItem key={item + index} title={item} href={item} />
-//           )
-//         )}
-//         {status === "unauthenticated" ? (
-//           <li>
-//             <Link href="/sign-in" className="text-white">
-//               <Button type="button" text="Login" />
-//             </Link>
-//           </li>
-//         ) : (
-//           <li>
-//             <Link href="/my-account" className="">
-//               <FaUser className="text-black text-xl" />
-//             </Link>
-//           </li>
-//         )}
-//       </ul>
-//       <div className="flex relative">
-//         {!toggleMenu && (
-//           <HiMenuAlt4
-//             fontSize={28}
-//             className=" md:hidden cursor-pointer"
-//             onClick={() => setToggleMenu(true)}
-//           />
-//         )}
-//         {toggleMenu && (
-//           <AiOutlineClose
-//             fontSize={28}
-//             className=" md:hidden cursor-pointer"
-//             onClick={() => setToggleMenu(false)}
-//           />
-//         )}
-//         {toggleMenu && (
-//           <ul
-//             className="z-10 fixed -top-0 -right-2 p-3 w-[70vw] h-screen shadow-2xl md:hidden list-none
-//             flex flex-col justify-start items-end rounded-md blue-glassmorphism  animate-slide-in"
-//           >
-//             <li className="text-xl w-full my-2">
-//               <AiOutlineClose onClick={() => setToggleMenu(false)} />
-//             </li>
-//             {["Market", "Exchange", "Tutorials", "Wallets"].map(
-//               (item, index) => (
-//                 <NavBarItem
-//                   key={item + index}
-//                   title={item}
-//                   href={item}
-//                   classprops="my-2 text-lg"
-//                 />
-//               )
-//             )}
-//           </ul>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
 import { brainwave } from "../assets";
 import { navigation } from "../constants";
-// import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -113,27 +11,31 @@ import Image from "next/image";
 import { background } from "../assets";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { MdDashboardCustomize } from "react-icons/md";
 
 // Shad
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function DropdownMenuDemo({ avatar }: { avatar: string }) {
+function DropdownMenuDemo({
+  avatar,
+  eth,
+  pkr,
+}: {
+  avatar: string;
+  eth: string;
+  pkr: string;
+}) {
   const logout = () => {
     signOut({
       callbackUrl: "/sign-in",
@@ -153,53 +55,28 @@ function DropdownMenuDemo({ avatar }: { avatar: string }) {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-n-7 !-right-4 border-none ring-0 absolute top-4">
-        <DropdownMenuItem>
-          <Link
-            href={"/cards"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Your Cards
+        <div className="mt-4 mb-8 flex justify-center flex-col items-center gap-2">
+          {avatar ? (
+            <Image src={avatar} width={96} height={96} alt="Username" />
+          ) : (
+            <FaUserCircle className="w-24 h-24" />
+          )}
+          <div className="flex gap-2 mt-2 w-full">
+            <span className="border-r border-r-gray-200 pr-2 w-1/2 text-right text-white text-sm">
+              Rs. {pkr}
+            </span>
+            <span className=" w-1/2 text-left text-white text-sm">
+              Eth. {eth}
+            </span>
+          </div>
+        </div>
+        <DropdownMenuItem className="cursor-pointer hover:bg-n-8 transition-all duration-200 w-full">
+          <Link href="/my-account">
+            <span className="px-2">Dashboard</span>
           </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link
-            href={"/orders"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Your Orders
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link
-            href={"/transfer"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Transfer
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link
-            href={"/transfer"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Transaction History
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link
-            href={"/convert"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Convert
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link
-            href={"/my-account"}
-            className="hover:bg-n-8 transition-all duration-200 w-full p-2 rounded-lg px-3"
-          >
-            Profile{" "}
-          </Link>
+          <DropdownMenuShortcut>
+            <MdDashboardCustomize fontSize={24} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-n-5 " />
         <DropdownMenuItem
@@ -208,7 +85,7 @@ function DropdownMenuDemo({ avatar }: { avatar: string }) {
         >
           <span className="px-2">Log out</span>
           <DropdownMenuShortcut>
-            <FaSignOutAlt />
+            <FaSignOutAlt fontSize={24} />
           </DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -279,29 +156,36 @@ const Header = () => {
 
           <HamburgerMenu />
         </nav>
-
-        {status !== "authenticated" ? (
+        {status === "loading" ? (
+          <Skeleton className="w-[120px] h-10]" />
+        ) : status === "authenticated" ? (
+          ""
+        ) : (
           <Link
             href="/signup"
             className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
           >
             New account
           </Link>
-        ) : (
-          ""
         )}
-        {status !== "authenticated" ? (
-          <Button className="hidden lg:flex" href="/sign-in">
-            Sign in
-          </Button>
-        ) : (
+        {status === "loading" ? (
+          <Skeleton className="w-[120px] h-10]" />
+        ) : status === "authenticated" ? (
           <>
             {" "}
             <span className="mr-2 text-sm">
               Welcome, {session?.user?.username}👋
             </span>
-            <DropdownMenuDemo avatar={session?.user?.avatar} />
+            <DropdownMenuDemo
+              avatar={session?.user?.avatar}
+              pkr={session?.user?.balancePkr}
+              eth={session?.user?.balanceEth}
+            />
           </>
+        ) : (
+          <Button className="hidden lg:flex" href="/sign-in">
+            Sign in
+          </Button>
         )}
 
         <Button

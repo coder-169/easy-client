@@ -1,17 +1,17 @@
 "use client";
 import Link from "next/link";
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import { signIn } from "next-auth/react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
-import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
-import { Rings } from "@/app/components/Navbar";
-import { MouseParallax, ScrollParallax } from "react-just-parallax";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ScrollParallax } from "react-just-parallax";
+import { useRouter } from "next/navigation";
 const SignIn = () => {
-  const parallaxRef = useRef(null);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState({
     firstName: "",
@@ -27,35 +27,41 @@ const SignIn = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
   // 2. Define a submit handler.
-  const onSubmitSign = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmitSign = async () => {
     setIsLoading(true);
-    signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      ...user,
-      name: user.username,
-    })
-      .then((dt) => {
-        if (dt?.ok) {
-          console.log(dt);
-          toast.success("Logged in Successfully");
-        } else {
-          console.log(dt?.error);
-        }
+    try {
+      signIn("credentials", {
+        redirect: false,
+        ...user,
+        name: user.username,
       })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Invalid Credentials");
-      });
-    setIsLoading(false);
+        .then((dt) => {
+          if (dt?.ok) {
+            console.log(dt);
+            toast.success("Logged in Successfully");
+            router.push("/");
+          } else {
+            console.log(dt?.error);
+            toast.error(dt?.error);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Invalid Credentials");
+        });
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      toast.error("An error occurred while signing in. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   const [type, setType] = useState("password");
 
   return (
     <ScrollParallax isAbsolutelyPositioned>
       <section className="h-screen z-50 relative w-full px-32 flex flex-row items-center justify-center">
-        <form onSubmit={onSubmitSign} className="mx-auto w-1/4 space-y-6 h-max">
+        <form onSubmit={onSubmitSign} className="mx-auto w-1/3 space-y-6 h-max">
           <Link
             href={"/"}
             className="flex cursor-pointer items-center gap-1 px-4"
@@ -110,11 +116,11 @@ const SignIn = () => {
           </Link>
           <div className="flex flex-col gap-4">
             <Button
-              // disabled={isLoading}
-              // type="submit"
-              // classes="w-1/2 mx-auto text-white"
-              // text={"Sign In"}
+              onClick={onSubmitSign}
+              loading={isLoading}
+              disabled={isLoading || !user.username || !user.password}
               white
+              className="w-full"
             >
               Sign in
             </Button>

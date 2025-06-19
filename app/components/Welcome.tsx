@@ -1,94 +1,10 @@
 "use client";
-// import React from "react";
-// import { SiEthereum } from "react-icons/si";
-
-// import Link from "next/link";
-// import { FaArrowRight } from "react-icons/fa";
-// import { useSession } from "next-auth/react";
-// import { RiDashboard2Fill } from "react-icons/ri";
-
-// const companyCommonStyles =
-//   "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-medium ";
-
-// const Welcome = () => {
-
-// const handleSubmit = (e) => {
-//   const { addressTo, amount, keyword, message } = formData;
-
-//   e.preventDefault();
-
-//   if (!addressTo || !amount || !keyword || !message) return;
-
-//   sendTransaction();
-// };
-//   const { status } = useSession()
-//   return (
-//     <div className="flex w-full justify-center text-black items-center">
-//       <div className="flex md:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
-//         <div className="flex flex-1 justify-start items-start flex-col mf:mr-10">
-//           <h2 className="text-4xl font-extrabold leading-9 sm:text-5xl text-gradient py-1 mb-2">
-//             Send Crypto
-//           </h2>
-//           <h2 className="text-4xl font-extrabold leading-9 sm:text-5xl text-gradient py-1">
-//             Across the world
-//           </h2>
-//           <p className="text-left font-semibold mt-5 md:w-9/12 w-11/12 text-base">
-//             Explore the crypto world. Buy and sell cryptocurrencies easily on
-//             Krypto.
-//           </p>
-//           {status === 'unauthenticated' ? (
-//             <Link
-//               href="/sign-in"
-//               className="text-white flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 gap-4 rounded-full cursor-pointer hover:bg-[#2546bd]"
-//             >
-//               <p className=" text-base font-semibold">Get Started</p>
-//               <FaArrowRight className=" mr-2 text-xs" />
-//             </Link>
-//           ) : (
-//             <Link
-//               type="button"
-//               href="/my-account"
-//               className="text-white flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
-//             >
-//               <RiDashboard2Fill className=" mr-2" />
-//               <p className=" text-base font-semibold">
-//                 Dashboard
-//               </p>
-//             </Link>
-//           )}
-
-//           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
-//             <div className={`rounded-tl-2xl ${companyCommonStyles}`}>
-//               Reliability
-//             </div>
-//             <div className={companyCommonStyles}>Security</div>
-//             <div className={`sm:rounded-tr-2xl ${companyCommonStyles}`}>
-//               Ethereum
-//             </div>
-//             <div className={`sm:rounded-bl-2xl ${companyCommonStyles}`}>
-//               Web 3.0
-//             </div>
-//             <div className={companyCommonStyles}>Low Fees</div>
-//             <div className={`rounded-br-2xl ${companyCommonStyles}`}>
-//               Blockchain
-//             </div>
-//           </div>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Welcome;
-
 import { curve, robot } from "../assets";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MouseParallax } from "react-just-parallax";
 
 import Button from "./CustomButton";
-import { heroIcons } from "../constants";
 import { ScrollParallax } from "react-just-parallax";
 import { useRef } from "react";
 import PlusSvg from "../assets/svg/PlusSvg";
@@ -97,10 +13,14 @@ import Notification from "./Notification";
 import Image from "next/image";
 import { SiEthereum } from "react-icons/si";
 import { useSession } from "next-auth/react";
+import { TransactionContext } from "../context/TransactionContext";
+import { shortenAddress } from "../utils/shortenAddress";
 
 const Hero = () => {
   const parallaxRef = useRef(null);
   const { status } = useSession();
+  const { connectWallet, currentAccount } = useContext(TransactionContext);
+  const { data: session } = useSession();
   return (
     <Section
       className="pt-[12rem] -mt-[5.25rem]"
@@ -128,11 +48,13 @@ const Hero = () => {
             EasyCrypt.
           </p>
           {status === "authenticated" ? (
-            <Button href="/sign-in" white>
-              Connect Wallet
-            </Button>
+            !currentAccount && (
+              <Button onClick={connectWallet} white>
+                Connect Wallet
+              </Button>
+            )
           ) : (
-            <Button href="/sign-in" white>
+            <Button href="/sign-up" white>
               Get started
             </Button>
           )}
@@ -173,9 +95,11 @@ const Hero = () => {
                           </span>
                         </div>
                         <div>
-                          <p className=" font-light text-sm">0xA6*****190</p>
-                          <p className=" font-semibold mt-1 flex justify-between">
-                            <span>Your Name</span>
+                          <p className=" font-light text-sm">
+                            {shortenAddress(currentAccount)}
+                          </p>
+                          <p className="capitalize font-semibold mt-1 flex justify-between">
+                            <span>{session?.user?.username}</span>
                             <span>●●/●●</span>
                           </p>
                         </div>

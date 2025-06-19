@@ -9,32 +9,21 @@ import { TransactionContext } from "@/app/context/TransactionContext";
 import { getSession } from "next-auth/react";
 
 const Page = () => {
-  const { sendTransaction } = useContext(TransactionContext);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currency, setCurrency] = useState("");
-  const [transfer, setTransfer] = useState({
-    amount: "",
-    account: "",
-    email: "",
-    message: "",
-  });
+  const { sendTransaction, isLoading, formData, handleChangeData } =
+    useContext(TransactionContext);
+  const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState("eth");
   const [account, setAccount] = useState({
     amount: "",
     account: "",
     email: "",
   });
 
-  const handleChange = (e) => {
-    setTransfer({ ...transfer, [e.target.name]: e.target.value });
-  };
-
   const handleAccountChange = (e) => {
     setAccount({ ...account, [e.target.name]: e.target.value });
   };
 
   const handleTransfer = async () => {
-    toast.loading("Processing Transaction", { duration: 1500 });
-    setIsLoading(true);
     try {
       const fastSession = await getSession();
       if (currency.toLowerCase() === "eth") {
@@ -52,6 +41,8 @@ const Page = () => {
         // if (data.success) toast.success("Transaction Processed");
         // else toast.error("Transaction failed");
       } else {
+        setLoading(true);
+        toast.info("Processing Transaction!");
         const resp = await fetch("/api/user/payment/transfer", {
           method: "post",
           headers: {
@@ -143,11 +134,11 @@ const Page = () => {
         </div>
         <textarea
           rows={5}
-          value={transfer.message}
-          onChange={handleChange}
+          value={formData.message}
+          onChange={handleChangeData}
           name="message"
           autoComplete="off"
-          readOnly={currency === "pkr"}
+          readOnly={currency === "pkr" ? true : false}
           className={`resize-none w-2/4 bg-transparent bg-opacity-30 px-3 rounded-xl border block focus:border-n-4 !outline-none border-n-6  transition-all !ring-0 duration-300 ease-in text-base text-n-1`}
           placeholder={
             "Dear John, I hope this message finds you well, I am transferring $100 to your account. Lmk when you receive.</div>"
@@ -171,30 +162,28 @@ const Page = () => {
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
               <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s email address
+                Recipient&apos;s address
               </h3>
             </div>
             <CustomInput
-              type="email"
-              hint="johnboe@gmail.com"
-              value={transfer.email}
-              handler={handleChange}
-              name="email"
+              type="text"
+              hint="0x...fdsa"
+              value={formData.addressTo}
+              handler={handleChangeData}
+              name="addressTo"
               classes="!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s Network Address
-              </h3>
+              <h3 className="text-base font-medium text-n-3">Keyword</h3>
             </div>
             <CustomInput
               type="text"
-              hint="0xEA..."
-              value={transfer.account}
-              handler={handleChange}
-              name="account"
+              hint="Keyword"
+              value={formData.keyword}
+              handler={handleChangeData}
+              name="keyword"
               classes="!w-2/4"
             />
           </div>
@@ -205,32 +194,21 @@ const Page = () => {
             <CustomInput
               type="number"
               hint="0.02"
-              value={transfer.amount}
-              handler={handleChange}
+              value={formData.amount}
+              handler={handleChangeData}
               name="amount"
               classes="!w-2/4"
             />
           </div>
+
           <Button
-            // onClick={handleTransfer}
-            // type="button"
-            // className="hover: w-1/4 ml-auto mt-2 border-[1px] p-2 border-[#3d4f7c] text-[#3d4f7c] hover:text-white hover:bg-[#3d4f7c] rounded-full cursor-pointer font-bold"
             white
-            disabled={
-              !transfer.email ||
-              !transfer.account ||
-              !transfer.amount ||
-              isLoading
-            }
+            loading={isLoading}
+            disabled={!formData.addressTo || !formData.amount || isLoading}
             onClick={handleTransfer}
+            className="w-1/4"
           >
-            {isLoading ? (
-              <span className="flex justify-between items-center gap-4">
-                Sending <Loader2 className="animate-spin size-4" />
-              </span>
-            ) : (
-              "Send now"
-            )}
+            Send Now
           </Button>
         </div>
 
@@ -292,34 +270,17 @@ const Page = () => {
               classes="!w-2/4"
             />
           </div>
-          {currency === "eth" ? (
-            <Button
-              white
-              disabled={
-                !transfer.email ||
-                !transfer.account ||
-                !transfer.amount ||
-                isLoading
-              }
-              onClick={handleTransfer}
-            >
-              Send
-            </Button>
-          ) : (
-            <Button
-              white
-              loading={isLoading}
-              disabled={
-                !account.email ||
-                !account.account ||
-                !account.amount ||
-                isLoading
-              }
-              onClick={handleTransfer}
-            >
-              Send
-            </Button>
-          )}
+          <Button
+            white
+            loading={loading}
+            disabled={
+              !account.email || !account.account || !account.amount || isLoading
+            }
+            onClick={handleTransfer}
+            className="w-1/4"
+          >
+            Send
+          </Button>
         </div>
       </div>
     </div>

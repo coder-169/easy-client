@@ -13,38 +13,59 @@ import Heading from "@/app/components/Heading";
 import Button from "@/app/components/CustomButton";
 import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import axios from "axios";
+import { toast } from "sonner";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [ethAmount, setEthAmount] = useState("");
-  const [pkrAmount, setPkrAmount] = useState("");
-  const [ethToPkr, setEthToPkr] = useState(0);
+  const [ethToPkr, setEthToPkr] = useState("");
   const { data: session, status } = useSession();
-  console.log(session);
-  const [amounts, setAmounts] = useState([0, 0]);
-  const getData = async () => {
+  const [converting, setConverting] = useState(false);
+  const { convertToPkr } = useContext(TransactionContext);
+
+  const convert = async () => {
+    try {
+      setConverting(true);
+
+      const isConverted = await convertToPkr(ethAmount);
+      console.log(isConverted);
+      const fastSession = await getSession();
+      if (isConverted) {
+        const resp = await fetch("/api/user/payment/convert", {
+          headers: {
+            id: fastSession?.user?._id,
+          },
+          body: JSON.stringify({
+            amount: ethAmount,
+            pkr: ethToPkr,
+          }),
+        });
+        const data = await resp.json();
+        if (data.success) {
+          toast.message(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        toast.error("error! try again");
+      }
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setConverting(false);
+    }
+  };
+  const getData = async (value: string) => {
     setIsLoading(true);
-    const mysession = await getSession();
-    const user = mysession?.user;
-    console.log(user);
-    fetch(
+    const { data } = await axios.get(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=pkr"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        const eth = data.ethereum.pkr * user.balanceEth;
-        const pkr = user.balancePkr;
-        const total = eth + user.balancePkr;
-        console.log(pkr, eth, total);
-        setEthToPkr(data.ethereum.pkr);
-        setAmounts([(eth / total) * 100, (pkr / total) * 100]);
-      });
+    );
+    const ethToPkr = data.ethereum.pkr * parseFloat(value);
+    setEthAmount(value);
+    setEthToPkr(ethToPkr.toString());
     setIsLoading(false);
   };
-  useEffect(() => {
-    getData();
-  }, []);
   return (
     <div className="my-8 mx-16">
       <Heading
@@ -59,43 +80,33 @@ const Page = () => {
           >
             <CustomInput
               hint="1"
-              name="to"
+              name="ethamount"
               type="text"
-              handler={(e) => {
-                setEthAmount(e.target.value);
-                setPkrAmount("");
-              }}
+              handler={(e) => getData(e.target.value)}
               label="Ethereum Amount"
-              value={
-                parseInt(pkrAmount) > 0
-                  ? (parseInt(pkrAmount) / ethToPkr).toString()
-                  : ethAmount
-              }
+              value={ethAmount}
               classes="mb-4"
             />
-            <CustomInput
-              hint="681600"
-              name="pkr"
-              type="text"
-              handler={(e) => {
-                setPkrAmount(e.target.value);
-                setEthAmount("");
-              }}
-              value={
-                parseInt(ethAmount) > 0
-                  ? (parseInt(ethAmount) * ethToPkr).toString()
-                  : pkrAmount
-              }
-              label="Pkr Amount"
-            />
-            <Button white className="mt-8 w-full rounded-rounded">
-              {isLoading ? (
-                <span className="flex items-center gap-4">
-                  Converting <Loader2 className="animate-spin size-4" />
-                </span>
-              ) : (
-                "Convert"
-              )}
+            {!isLoading ? (
+              <CustomInput
+                hint="681600"
+                name="pkr"
+                type="text"
+                readOnly
+                value={ethToPkr}
+                label="Pkr Amount"
+              />
+            ) : (
+              <Skeleton className="w-[448px] h-[45px] mt-6" />
+            )}
+            <Button
+              loading={converting}
+              disabled={converting}
+              onClick={convert}
+              white
+              className="mt-8 w-full rounded-rounded"
+            >
+              {converting ? "Converting" : "Convert"}
             </Button>
           </form>
         </div>
@@ -106,7 +117,12 @@ const Page = () => {
           <div className="w-2/5 h-max rounded-2xl p-4 bg-n-7">
             <div className="flex justify-between items-center">
               <div className="w-36">
-                <DoughnutChart amounts={amounts} />
+                <DoughnutChart
+                  amounts={[
+                    session?.user?.balanceEth,
+                    session?.user?.balancePkr,
+                  ]}
+                />
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Total Crypto Balance</p>
@@ -114,7 +130,7 @@ const Page = () => {
                   <span className="text-xl font-semibold">
                     <AnimatedCounter
                       duration={1}
-                      amount={session?.user.balanceEth}
+                      amount={session?.user?.balanceEth}
                     />{" "}
                     <span className="text-blue-400 text-sm">ETH</span>
                   </span>{" "}
@@ -125,7 +141,7 @@ const Page = () => {
                     <span className="text-xl font-semibold">
                       <AnimatedCounter
                         duration={2}
-                        amount={session?.user.balancePkr}
+                        amount={session?.user?.balancePkr}
                       />{" "}
                       <span className="text-blue-400 text-sm">PKR</span>
                     </span>{" "}

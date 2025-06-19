@@ -1,29 +1,29 @@
-import { ethers, isAddress,formatEther } from "ethers";
+import Account from "@/app/models/Account";
+import mongoose from "mongoose";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-const providers = new ethers.AlchemyProvider(
-  "sepolia",
-  "vqpCd47FrQL_TBwuKXJOK2oOCr123yr-"
-);
 
 export async function POST(req: NextResponse) {
+  const getHeaders = await headers();
+  const id = getHeaders.get("id");
   try {
-    const { address } = await req.json();
-    console.log(address);
-    if (!isAddress(address)) {
-      throw new Error("Invalid Ethereum address");
-    }
+    const { balance, address } = await req.json();
+    console.log(balance, address);
 
-    // Connect to the Sepolia test network using Alchemy
+    const objectId = new mongoose.Types.ObjectId(id);
+    const user = await Account.findOne({ accountId: objectId });
 
-    // Get the balance in Wei (smallest unit of Ether)
-    const balanceWei = await providers.getBalance(address);
-    console.log(balanceWei)
-    // Convert balance from Wei to Ether
-    const balanceEther = formatEther(balanceWei);
-
+    if (!user)
+      return NextResponse.json({
+        success: false,
+        message: "Invalid identification!",
+      });
+    user.address = address;
+    user.balanceEth = parseFloat(balance);
+    await user.save();
+    console.log(user);
     return NextResponse.json({
       success: true,
-      balanceEther,
       message: "Balance found successfully",
     });
   } catch (error: unknown) {
@@ -31,7 +31,7 @@ export async function POST(req: NextResponse) {
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
+        message: (error as Error).message,
       },
       { status: 500 }
     );

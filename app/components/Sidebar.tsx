@@ -93,7 +93,7 @@ const Sidebar = () => {
         </ul>
       </nav>
       {status === "loading" ? (
-        <Skeleton className="ml-6 h-10 w-[270px]" />
+        <Skeleton className="ml-4 h-10 w-[270px] mb-8" />
       ) : status === "authenticated" ? (
         <div className="flex items-center justify-between mx-4 mb-8 gap-2">
           <div className="flex items-center gap-2">

@@ -86,6 +86,16 @@ declare type Transaction = {
   senderAcc: string;
   receiverAcc: string;
 };
+declare type TransactionEthereum = {
+  from: string;
+  receiver: string;
+  amount: string;
+  message: string;
+  timestamp: string;
+  keyword: string;
+  username: string;
+  tx_hash:string;
+};
 
 declare type Bank = {
   $id: string;

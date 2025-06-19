@@ -4,7 +4,7 @@ import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { brainwave } from "../assets";
 import { navigation } from "../constants";
 import MenuSvg from "../assets/svg/MenuSvg";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Button from "./CustomButton";
 import Image from "next/image";
@@ -26,6 +26,7 @@ import {
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TransactionContext } from "../context/TransactionContext";
 
 function DropdownMenuDemo({
   avatar,
@@ -113,9 +114,8 @@ const Header = () => {
     enablePageScroll();
     setOpenNavigation(false);
   };
-  console.log(brainwave);
   const { status, data: session } = useSession();
-  console.log(session);
+
   return (
     <div
       className={`fixed top-0 left-0 w-full z-50  border-b border-n-6 lg:bg-n-8/90 lg:backdrop-blur-sm ${
@@ -157,7 +157,7 @@ const Header = () => {
           <HamburgerMenu />
         </nav>
         {status === "loading" ? (
-          <Skeleton className="w-[120px] h-10]" />
+          <Skeleton className="w-[120px] h-10" />
         ) : status === "authenticated" ? (
           ""
         ) : (
@@ -169,7 +169,7 @@ const Header = () => {
           </Link>
         )}
         {status === "loading" ? (
-          <Skeleton className="w-[120px] h-10]" />
+          <Skeleton className="w-[120px] h-10" />
         ) : status === "authenticated" ? (
           <>
             {" "}

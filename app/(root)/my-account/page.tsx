@@ -167,287 +167,291 @@ const Page = () => {
 
   useEffect(() => {
     if (session) {
-      console.log(session?.user);
       setValues({ ...values, ...session?.user });
       setLoading(false);
     }
   }, [session]);
 
   return (
-  <ProtectedRoute>
-  <div className="my-8 mx-4 md:mx-16">
-      <Heading
-        title="My Account"
-        subtitle="Edit your account preferences and provide correct details"
-      />
-      {loading ? (
-        <Skeleton className="h-[70vh] w-full" />
-      ) : (
-        <>
-          <form className="mt-12" onSubmit={(e) => e.preventDefault()}>
-            <div className="space-y-12">
-              <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-xl font-semibold leading-7 text-n-1">
-                  Profile
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-n-2">
-                  This information will be displayed publicly so be careful what
-                  you share.
-                </p>
+    <ProtectedRoute>
+      <div className="my-8 mx-4 md:mx-16">
+        <Heading
+          title="My Account"
+          subtitle="Edit your account preferences and provide correct details"
+        />
+        {loading ? (
+          <Skeleton className="h-[70vh] w-full" />
+        ) : (
+          <>
+            <form className="mt-12" onSubmit={(e) => e.preventDefault()}>
+              <div className="space-y-12">
+                <div className="border-b border-gray-900/10 pb-12">
+                  <h2 className="text-xl font-semibold leading-7 text-n-1">
+                    Profile
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-n-2">
+                    This information will be displayed publicly so be careful
+                    what you share.
+                  </p>
 
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-4">
-                    <label
-                      htmlFor="username"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      Username
-                    </label>
-                    <div className="mt-2">
-                      <CustomInput
-                        type="text"
-                        name="username"
-                        hint="janesmith"
-                        value={values.username}
-                        handler={changeHandler}
-                        readOnly={true}
-                        classes="opacity-90"
-                      />
+                  <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div className="sm:col-span-4">
+                      <label
+                        htmlFor="username"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        Username
+                      </label>
+                      <div className="mt-2">
+                        <CustomInput
+                          type="text"
+                          name="username"
+                          hint="janesmith"
+                          value={values.username}
+                          handler={changeHandler}
+                          readOnly={true}
+                          classes="opacity-90"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-span-full">
+                      <label
+                        htmlFor="photo"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        Photo
+                      </label>
+                      <div className="mt-2 flex items-center gap-x-3">
+                        {avatarPreview ? (
+                          <Image
+                            src={avatarPreview}
+                            alt="Profile"
+                            width={192}
+                            height={192}
+                            className="h-48 w-48 rounded-full object-cover"
+                          />
+                        ) : (
+                          <svg
+                            className="h-48 w-48 text-gray-300"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                        <div>
+                          <label htmlFor="avatar-upload">
+                            <Button white className="w-1/4">
+                              Change
+                            </Button>
+                            <input
+                              id="avatar-upload"
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleAvatarChange}
+                            />
+                          </label>
+                          {avatarFile && (
+                            <Button
+                              onClick={updateAvatar}
+                              white
+                              className="ml-2"
+                              loading={btnLoading}
+                            >
+                              Save Avatar
+                            </Button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="col-span-full">
-                    <label
-                      htmlFor="photo"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      Photo
-                    </label>
-                    <div className="mt-2 flex items-center gap-x-3">
-                      {avatarPreview ? (
-                        <Image
-                          src={avatarPreview}
-                          alt="Profile"
-                          width={192}
-                          height={192}
-                          className="h-48 w-48 rounded-full object-cover"
+                <div className="border-b border-gray-900/10 pb-12">
+                  <h2 className="text-xl font-semibold leading-7 text-n-1">
+                    Personal Information
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-n-2">
+                    Use a permanent address where you can receive mail.
+                  </p>
+
+                  <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div className="sm:col-span-3">
+                      <label
+                        htmlFor="first-name"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        First name
+                      </label>
+                      <div className="mt-2">
+                        <CustomInput
+                          type="text"
+                          name="firstName"
+                          hint="Jane"
+                          value={values.firstName}
+                          handler={changeHandler}
                         />
-                      ) : (
-                        <svg
-                          className="h-48 w-48 text-gray-300"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                      <div>
-                        <label htmlFor="avatar-upload">
-                          <Button white className="w-1/4">
-                            Change
-                          </Button>
-                          <input
-                            id="avatar-upload"
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleAvatarChange}
-                          />
-                        </label>
-                        {avatarFile && (
-                          <Button
-                            onClick={updateAvatar}
-                            white
-                            className="ml-2"
-                            loading={btnLoading}
-                          >
-                            Save Avatar
-                          </Button>
-                        )}
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-3">
+                      <label
+                        htmlFor="last-name"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        Last name
+                      </label>
+                      <div className="mt-2">
+                        <CustomInput
+                          type="text"
+                          name="lastName"
+                          hint={"Doe"}
+                          value={values.lastName}
+                          handler={changeHandler}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-4">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        Email address
+                      </label>
+                      <div className="mt-2">
+                        <CustomInput
+                          name="email"
+                          type="email"
+                          hint="janedoe@gmail.com"
+                          value={values.email}
+                          handler={changeHandler}
+                          readOnly={true}
+                          classes="opacity-80"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-xl font-semibold leading-7 text-n-1">
-                  Personal Information
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-n-2">
-                  Use a permanent address where you can receive mail.
-                </p>
+              <div className="mt-6 flex items-center justify-end gap-x-6">
+                <Button
+                  disabled={btnLoading}
+                  onClick={updateProfile}
+                  white
+                  loading={btnLoading}
+                  className="w-1/5"
+                >
+                  Save
+                </Button>
+              </div>
+            </form>
+            <div className="my-8 border border-gray-700" />
+            <form className="mt-12" onSubmit={(e) => e.preventDefault()}>
+              <div className="space-y-12">
+                <div className="border-b border-gray-900/10 pb-12">
+                  <h2 className="text-xl font-semibold leading-7 text-n-1">
+                    Update Password
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-n-3">
+                    Choose a Strong Password includes numbers, letters and
+                    characters.
+                  </p>
 
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      First name
-                    </label>
-                    <div className="mt-2">
-                      <CustomInput
-                        type="text"
-                        name="firstName"
-                        hint="Jane"
-                        value={values.firstName}
-                        handler={changeHandler}
-                      />
+                  <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div className="relative sm:col-span-4">
+                      <label
+                        htmlFor="oldPass"
+                        className="block text-sm font-bold leading-6 text-n-3"
+                      >
+                        Old Password
+                      </label>
+                      <div className="mt-2 relative">
+                        <FaLock className="absolute top-4 left-4 text-gray-400" />
+                        <CustomInput
+                          type={type}
+                          name="oldPass"
+                          hint="*****"
+                          value={passwords.oldPass}
+                          handler={passwordChangeHandler}
+                          classes="pl-10"
+                        />
+                      </div>
+                      <button
+                        className="absolute top-[51px] right-4 text-white"
+                        onClick={() =>
+                          setType(type === "password" ? "text" : "password")
+                        }
+                      >
+                        {type === "text" ? <FaEyeSlash /> : <FaEye />}
+                      </button>
                     </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="last-name"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      Last name
-                    </label>
-                    <div className="mt-2">
-                      <CustomInput
-                        type="text"
-                        name="lastName"
-                        hint={"Doe"}
-                        value={values.lastName}
-                        handler={changeHandler}
-                      />
+                    <div className="sm:col-span-3">
+                      <label
+                        htmlFor="newPass"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        New Password
+                      </label>
+                      <div className="mt-2 relative">
+                        <FaUnlock className="absolute top-4 left-4 text-gray-400" />
+                        <CustomInput
+                          type={type}
+                          name="newPass"
+                          hint="******"
+                          classes="pl-10"
+                          value={passwords.newPass}
+                          handler={passwordChangeHandler}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="sm:col-span-4">
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      Email address
-                    </label>
-                    <div className="mt-2">
-                      <CustomInput
-                        name="email"
-                        type="email"
-                        hint="janedoe@gmail.com"
-                        value={values.email}
-                        handler={changeHandler}
-                        readOnly={true}
-                        classes="opacity-80"
-                      />
+                    <div className="sm:col-span-3">
+                      <label
+                        htmlFor="confirmPass"
+                        className="block text-sm font-semibold leading-6 text-n-3"
+                      >
+                        Confirm Password
+                      </label>
+                      <div className="mt-2 relative">
+                        <FaLock className="absolute top-4 left-4 text-gray-400" />
+                        <CustomInput
+                          type={type}
+                          name="confirmPass"
+                          hint="******"
+                          value={passwords.confirmPass}
+                          handler={passwordChangeHandler}
+                          classes="pl-10"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-6 flex items-center justify-end gap-x-6">
-              <Button
-                disabled={btnLoading}
-                onClick={updateProfile}
-                white
-                loading={btnLoading}
-                className="w-1/5"
-              >
-                Save
-              </Button>
-            </div>
-          </form>
-          <div className="my-8 border border-gray-700" />
-          <form className="mt-12" onSubmit={(e) => e.preventDefault()}>
-            <div className="space-y-12">
-              <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-xl font-semibold leading-7 text-n-1">
-                  Update Password
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-n-3">
-                  Choose a Strong Password includes numbers, letters and
-                  characters.
-                </p>
-
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="relative sm:col-span-4">
-                    <label
-                      htmlFor="oldPass"
-                      className="block text-sm font-bold leading-6 text-n-3"
-                    >
-                      Old Password
-                    </label>
-                    <div className="mt-2 relative">
-                      <FaLock className="absolute top-4 left-4 text-gray-400" />
-                      <CustomInput
-                        type={type}
-                        name="oldPass"
-                        hint="*****"
-                        value={passwords.oldPass}
-                        handler={passwordChangeHandler}
-                        classes="pl-10"
-                      />
-                    </div>
-                    <button
-                      className="absolute top-[51px] right-4 text-white"
-                      onClick={() =>
-                        setType(type === "password" ? "text" : "password")
-                      }
-                    >
-                      {type === "text" ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="newPass"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      New Password
-                    </label>
-                    <div className="mt-2 relative">
-                      <FaUnlock className="absolute top-4 left-4 text-gray-400" />
-                      <CustomInput
-                        type={type}
-                        name="newPass"
-                        hint="******"
-                        classes="pl-10"
-                        value={passwords.newPass}
-                        handler={passwordChangeHandler}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="confirmPass"
-                      className="block text-sm font-semibold leading-6 text-n-3"
-                    >
-                      Confirm Password
-                    </label>
-                    <div className="mt-2 relative">
-                      <FaLock className="absolute top-4 left-4 text-gray-400" />
-                      <CustomInput
-                        type={type}
-                        name="confirmPass"
-                        hint="******"
-                        value={passwords.confirmPass}
-                        handler={passwordChangeHandler}
-                        classes="pl-10"
-                      />
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-6 flex items-center justify-end gap-x-6">
+                <Button
+                  className="w-1/5"
+                  onClick={updatePasswords}
+                  white
+                  loading={btnLoading}
+                >
+                  Update
+                </Button>
               </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-end gap-x-6">
-              <Button className='w-1/5' onClick={updatePasswords} white loading={btnLoading}>
-                Update
-              </Button>
-            </div>
-          </form>
-        </>
-      )}
-    </div>
-  </ProtectedRoute>
+            </form>
+          </>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 };
 

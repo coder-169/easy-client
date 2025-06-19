@@ -12,7 +12,8 @@ import {
 
 import { cn, formatDateTime, removeSpecialCharacters } from "../lib/utils";
 import { transactionCategoryStyles } from "../constants";
-import React from "react";
+import React, { useContext } from "react";
+import { TransactionContext } from "../context/TransactionContext";
 
 const CategoryBadge = ({ category }: CategoryBadgeProps) => {
   const { borderColor, backgroundColor, textColor, chipBackgroundColor } =
@@ -37,7 +38,9 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
 };
 
 const TransactionsTableEth = () => {
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  // const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  const { transactions, currentAccount } = useContext(TransactionContext);
+  
   return (
     <Table className="rounded-lg">
       <TableHeader className="bg-n-7 text-n-2 !rounded-lg">
@@ -51,48 +54,45 @@ const TransactionsTableEth = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {transactions.map((t: Transaction) => {
+        {transactions?.map((t: TransactionEthereum, idx: number) => {
           const amount = t.amount;
-
-          const isDebit = t.type === "debit";
-          const isCredit = t.type === "credit";
+          const isDebit = t.from === currentAccount;
+          const isCredit = t.from !== currentAccount;
 
           return (
             <TableRow
-              key={t._id}
-              className={`${
-                isDebit || amount < 0 ? "bg-n-7/10" : "bg-n-7/40"
-              } !over:bg-none`}
+              key={t.tx_hash + idx}
+              className={`${isDebit ? "bg-n-7/10" : "bg-n-7/40"} !over:bg-none`}
             >
               <TableCell className="max-w-[250px] pl-2 pr-10">
                 <div className="flex items-center gap-3">
                   <h1 className="text-sm truncate font-semibold text-n-1">
-                    {removeSpecialCharacters(t.name)}
+                    {removeSpecialCharacters(t.username)}
                   </h1>
                 </div>
               </TableCell>
               <TableCell className="max-w-[250px] pl-2 pr-10">
                 <div className="flex items-center gap-3">
                   <p className="!text-xs truncate font-semibold text-n-1">
-                    {t.t_name}
+                    {t.receiver}
                   </p>
                 </div>
               </TableCell>
               <TableCell
                 className={`pl-2 pr-10 font-semibold ${
-                  isDebit || amount < 0 ? "text-[#f04438]" : "text-[#039855]"
+                  isDebit ? "text-[#f04438]" : "text-[#039855]"
                 }`}
               >
                 {isDebit ? `-${amount}` : isCredit ? amount : amount}
               </TableCell>
               <TableCell className="pl-2 pr-10 text-n-1">
-                <CategoryBadge category={t.status} />
+                <CategoryBadge category={t.amount} />
               </TableCell>
               <TableCell className="min-w-32 pl-2 pr-10 text-n-1">
-                {formatDateTime(new Date(t.date)).dateTime}
+                {formatDateTime(new Date(t.timestamp)).dateTime}
               </TableCell>
               <TableCell className="pl-2 pr-10 capitalize min-w-24 text-n-1">
-                {t.currency}
+                {t.tx_hash}
               </TableCell>
               {/* <TableCell className="pl-2 pr-10 max-md:hidden">
                                 <CategoryBadge category={t.category} />

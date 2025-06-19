@@ -2,7 +2,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -10,8 +9,7 @@ import {
 } from "./ui/table";
 //   import { transactionCategoryStyles } from "@/constants"
 
-import { cn, formatDateTime, removeSpecialCharacters } from "../lib/utils";
-import { transactionCategoryStyles } from "../constants";
+import { formatDateTime, removeSpecialCharacters } from "../lib/utils";
 import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { toast } from "sonner";

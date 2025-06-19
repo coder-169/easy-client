@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import AuthProvider from "./context/AuthContext";
+import { TransactionsProvider } from "./context/TransactionContext";
 
 export const metadata: Metadata = {
   title: "Easy Krypt",
@@ -15,14 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <TransactionsProvider> */}
       <AuthProvider>
-        <body className={` antialiased`}>
-          <Toaster position="bottom-right" />
-          {children}
-        </body>
+        <TransactionsProvider>
+          <body className={` antialiased`}>
+            <Toaster position="bottom-right" />
+            {children}
+          </body>
+        </TransactionsProvider>
       </AuthProvider>
-      {/* </TransactionsProvider> */}
     </html>
   );
 }

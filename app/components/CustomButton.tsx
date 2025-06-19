@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
   px,
   white,
   disabled,
-  loading = false,
+loading = false,
   type = "button",
 }) => {
   const classes = `button relative inline-flex items-center justify-center h-11 transition-colors hover:text-color-1 disabled:opacity-70 disabled:pointer-events-none disabled:cursor-not-allowed ${

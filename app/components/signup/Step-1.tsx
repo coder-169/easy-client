@@ -14,7 +14,7 @@ const Step2 = ({
   return (
     <div className="mt-4">
       <h3 className="text-2xl text-n-1 font-bold mb-8">Cnic and Contact Details</h3>
-      <div className="flex gap-8 justify-between">
+      <div className="flex gap-4 md:gap-8 justify-between">
         <Input
           type="date"
           hint={"YYYY-MM-DD"}
@@ -34,7 +34,7 @@ const Step2 = ({
           classes="w-1/2"
         />
       </div>
-      <div className="my-4 flex gap-8 justify-between">
+      <div className="my-4 flex gap-4 md:gap-8 justify-between">
         <Input
           type="email"
           hint={"Enter your email"}

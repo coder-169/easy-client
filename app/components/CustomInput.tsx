@@ -14,7 +14,7 @@ const CustomInput = ({
   <div className="inline-block w-full">
     <label
       htmlFor={name}
-      className="mb-1 text-sm  text-n-2 block font-semibold"
+      className="mb-1 text-xs md:text-sm text-n-2 block font-semibold"
     >
       {label}
     </label>

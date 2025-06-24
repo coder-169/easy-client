@@ -75,13 +75,12 @@ const Page = () => {
   };
 
   return (
-    <div className="my-8 mx-16">
+    <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
       <Heading
         title="Payment Transfer"
         subtitle="Provide details related to payment transfer"
       />
-      <div className="bg-n-7 p-4 rounded-xl mt-8 flex items-center justify-between mx-auto relative z-40 w-[420px]">
-        {/* Highlight Background */}
+      <div className="bg-n-7 p-2 sm:p-4 rounded-xl mt-8 flex items-center justify-between mx-auto relative z-40 w-full max-w-[420px]">
         <span
           className={`absolute top-[10%] w-[46%] h-4/5 rounded-xl bg-n-8 text-white transition-transform duration-300 ease-in-out z-20`}
           style={{
@@ -90,22 +89,20 @@ const Page = () => {
           }}
         ></span>
 
-        {/* ETH Button */}
         <button
           onClick={() => setCurrency("eth")}
           disabled={isLoading}
-          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
+          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-2 sm:px-4 py-2 w-[48%] font-semibold transition-colors duration-300 ${
             currency === "eth" ? "text-white" : "text-n-2"
           }`}
         >
           ETH
         </button>
 
-        {/* PKR Button */}
         <button
           onClick={() => setCurrency("pkr")}
           disabled={isLoading}
-          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-4 py-2 w-[200px] font-semibold transition-colors duration-300 ${
+          className={`disabled:opacity-70 disabled:pointer-events-none relative z-30 rounded-xl px-2 sm:px-4 py-2 w-[48%] font-semibold transition-colors duration-300 ${
             currency === "pkr" ? "text-white" : "text-n-2"
           }`}
         >
@@ -113,21 +110,24 @@ const Page = () => {
         </button>
       </div>
 
-      <h2 className="text-2xl font-semibold mt-8 text-n-1">Transfer Details</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mt-8 text-n-1">
+        Transfer Details
+      </h2>
       <p className="text-sm text-n-4">Enter the details</p>
 
+      {/* Transfer Note */}
       <div
         className={`${
           currency === "pkr"
             ? "opacity-80 pointer-events-none cursor-not-allowed"
             : ""
-        } flex gap-4 items-center py-4`}
+        } flex flex-col sm:flex-row gap-4 items-start sm:items-center py-4`}
       >
-        <div className="w-1/3">
+        <div className="w-full sm:w-1/3">
           <h3 className="text-base font-semibold text-n-1">
             Transfer Note(optional)
           </h3>
-          <p className="text-sm  text-n-4">
+          <p className="text-sm text-n-4">
             Please provide any additional information or instructions related to
             transfer
           </p>
@@ -139,10 +139,8 @@ const Page = () => {
           name="message"
           autoComplete="off"
           readOnly={currency === "pkr" ? true : false}
-          className={`resize-none w-2/4 bg-transparent bg-opacity-30 px-3 rounded-xl border block focus:border-n-4 !outline-none border-n-6  transition-all !ring-0 duration-300 ease-in text-base text-n-1`}
-          placeholder={
-            "Dear John, I hope this message finds you well, I am transferring $100 to your account. Lmk when you receive.</div>"
-          }
+          className={`resize-none w-full sm:w-2/3 bg-transparent bg-opacity-30 px-3 rounded-xl border block focus:border-n-4 !outline-none border-n-6 transition-all !ring-0 duration-300 ease-in text-base text-n-1`}
+          placeholder="Dear John, I hope this message finds you well, I am transferring $100 to your account. Lmk when you receive."
         ></textarea>
       </div>
       <div className="overflow-hidden relative w-full h-[500px]">
@@ -161,8 +159,8 @@ const Page = () => {
           </p>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s address
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                address
               </h3>
             </div>
             <CustomInput
@@ -171,12 +169,14 @@ const Page = () => {
               value={formData.addressTo}
               handler={handleChangeData}
               name="addressTo"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">Keyword</h3>
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                Keyword
+              </h3>
             </div>
             <CustomInput
               type="text"
@@ -184,12 +184,14 @@ const Page = () => {
               value={formData.keyword}
               handler={handleChangeData}
               name="keyword"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">Amount</h3>
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                Amount
+              </h3>
             </div>
             <CustomInput
               type="number"
@@ -197,7 +199,7 @@ const Page = () => {
               value={formData.amount}
               handler={handleChangeData}
               name="amount"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
 
@@ -206,7 +208,7 @@ const Page = () => {
             loading={isLoading}
             disabled={!formData.addressTo || !formData.amount || isLoading}
             onClick={handleTransfer}
-            className="w-1/4"
+            className="w-full md:w-1/4"
           >
             Send Now
           </Button>
@@ -229,8 +231,8 @@ const Page = () => {
           </p>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s Email Address
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                Email
               </h3>
             </div>
             <CustomInput
@@ -239,13 +241,13 @@ const Page = () => {
               value={account.email}
               handler={handleAccountChange}
               name="email"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">
-                Recipient&apos;s Account Number
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                Account Number
               </h3>
             </div>
             <CustomInput
@@ -254,12 +256,14 @@ const Page = () => {
               value={account.account}
               handler={handleAccountChange}
               name="account"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
           <div className="flex gap-4 items-center py-4">
             <div className="w-1/3">
-              <h3 className="text-base font-medium text-n-3">Amount</h3>
+              <h3 className="text-sm md:text-base font-medium text-n-3">
+                Amount
+              </h3>
             </div>
             <CustomInput
               type="number"
@@ -267,7 +271,7 @@ const Page = () => {
               value={account.amount}
               handler={handleAccountChange}
               name="amount"
-              classes="!w-2/4"
+              classes="w-full md:!w-2/4"
             />
           </div>
           <Button
@@ -277,7 +281,7 @@ const Page = () => {
               !account.email || !account.account || !account.amount || isLoading
             }
             onClick={handleTransfer}
-            className="w-1/4"
+            className="w-full md:w-1/4"
           >
             Send
           </Button>

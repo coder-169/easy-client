@@ -60,8 +60,11 @@ const SignIn = () => {
 
   return (
     <ScrollParallax isAbsolutelyPositioned>
-      <section className="h-screen z-50 relative w-full px-32 flex flex-row items-center justify-center">
-        <form onSubmit={onSubmitSign} className="mx-auto w-1/3 space-y-6 h-max">
+      <section className="h-screen z-50 relative w-full px-4 md:px-16 lg:px-32 flex flex-row items-center justify-center">
+        <form
+          onSubmit={onSubmitSign}
+          className="mx-auto w-full sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3 space-y-6 h-max"
+        >
           <Link
             href={"/"}
             className="flex cursor-pointer items-center gap-1 px-4"

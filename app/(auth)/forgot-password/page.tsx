@@ -7,14 +7,15 @@ import Logo from "@/app/components/Logo";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
 import { ScrollParallax } from "react-just-parallax";
-import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [passwords, setPasswords] = useState({
     newPassword: "",
     confirmPassword: "",
   });
+  const router = useRouter();
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
@@ -30,6 +31,10 @@ const Page = () => {
   };
 
   const handleEmailCode = async () => {
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
     setIsLoading(true);
     try {
       // Sending Code
@@ -56,9 +61,22 @@ const Page = () => {
     setIsLoading(true);
     try {
       // Sending Code
-      setIsVerified(true);
-      toast.success("Code verified successfully!");
+      const resp = await fetch("/api/user/verify", {
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          code,
+        }),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        router.push("/sign-in");
+        toast.success("Account verified successfully!");
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +108,6 @@ const Page = () => {
             <Logo />
           </Link>
           <h3 className="text-3xl font-bold text">Forgot Password</h3>
-          {}
           {codeSent && !isVerified ? (
             <CustomInput
               type="text"
@@ -106,7 +123,7 @@ const Page = () => {
           ) : (
             !isVerified && (
               <CustomInput
-                type="text"
+                type="email"
                 hint={"Enter your email"}
                 // label={"Login Id"}
                 name={"username"}
@@ -159,53 +176,30 @@ const Page = () => {
                 onClick={handlePasswordUpdate}
                 disabled={isLoading}
                 // type="submit"
+                loading={isLoading}
                 className="relative disabled:opacity-70 disabled:pointer-events-auto disabled:cursor-not-allowed"
                 // text={"Sign In"}
                 white
               >
-                {!isLoading ? (
-                  <p className="flex justify-between text-center">
-                    <span>Update</span>
-                  </p>
-                ) : (
-                  <p className="flex justify-between">
-                    <span></span>
-                    <span>Updating</span>
-                    <Loader2Icon className="animate-spin text-black" />
-                  </p>
-                )}
+                {!isLoading ? "Update" : "Updating"}
               </Button>
             ) : (
               <Button
                 onClick={codeSent ? handleCodeVerification : handleEmailCode}
                 disabled={isLoading}
                 // type="submit"
+                loading={isLoading}
                 className="relative disabled:opacity-70 disabled:pointer-events-auto disabled:cursor-not-allowed"
                 // text={"Sign In"}
                 white
               >
-                {codeSent ? (
-                  !isLoading ? (
-                    <p className="flex justify-between text-center">
-                      <span>Verify</span>
-                    </p>
-                  ) : (
-                    <p className="flex justify-between">
-                      <span></span>
-                      <span>Verifying</span>
-                      <Loader2Icon className="animate-spin text-black" />
-                    </p>
-                  )
-                ) : !isLoading ? (
-                  <p className="flex justify-between text-center">
-                    <span>Get Code</span>
-                  </p>
-                ) : (
-                  <p className="">
-                    <span>Getting Code</span>
-                    <Loader2Icon className="absolute top-2 right-2 animate-spin text-black" />
-                  </p>
-                )}
+                {codeSent
+                  ? !isLoading
+                    ? "Verify"
+                    : "Verifying"
+                  : !isLoading
+                  ? "Get code"
+                  : "Getting code"}
               </Button>
             )}
           </div>

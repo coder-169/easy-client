@@ -72,7 +72,7 @@ function DropdownMenuDemo({
           </div>
         </div>
         <DropdownMenuItem className="cursor-pointer hover:bg-n-8 transition-all duration-200 w-full">
-          <Link href="/my-account">
+          <Link href="/profile">
             <span className="px-2">Dashboard</span>
           </Link>
           <DropdownMenuShortcut>
@@ -115,7 +115,18 @@ const Header = () => {
     setOpenNavigation(false);
   };
   const { status, data: session } = useSession();
-
+  const newNavigation =
+    status === "authenticated"
+      ? [
+          ...navigation.slice(0, 3),
+          {
+            id: "5",
+            title: "Dashboard",
+            url: "/profile",
+            onlyMobile: true,
+          },
+        ]
+      : navigation;
   return (
     <div
       className={`fixed top-0 left-0 w-full z-50  border-b border-n-6 lg:bg-n-8/90 lg:backdrop-blur-sm ${
@@ -138,7 +149,7 @@ const Header = () => {
           } fixed top-[5rem] left-0 right-0 bottom-0 bg-n-8 lg:static lg:flex lg:mx-auto lg:bg-transparent`}
         >
           <div className="relative z-2 flex flex-col items-center justify-center m-auto lg:flex-row">
-            {navigation.map((item) => (
+            {newNavigation.map((item) => (
               <a
                 key={item.id}
                 href={item.url}
@@ -153,40 +164,35 @@ const Header = () => {
               </a>
             ))}
           </div>
-
           <HamburgerMenu />
         </nav>
-        {status === "loading" ? (
-          <Skeleton className="w-[120px] h-10" />
-        ) : status === "authenticated" ? (
-          ""
-        ) : (
-          <Link
-            href="/signup"
-            className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
-          >
-            New account
-          </Link>
-        )}
-        {status === "loading" ? (
-          <Skeleton className="w-[120px] h-10" />
-        ) : status === "authenticated" ? (
-          <>
-            {" "}
-            <span className="mr-2 text-sm">
-              Welcome, {session?.user?.username}👋
-            </span>
+        <div className="hidden md:flex gap-4 items-center">
+          {status === "loading" ? (
+            <Skeleton className="w-[120px] h-10" />
+          ) : status === "authenticated" ? (
+            ""
+          ) : (
+            <Link
+              href="/sign-up"
+              className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
+            >
+              New account
+            </Link>
+          )}
+          {status === "loading" ? (
+            <Skeleton className="w-[120px] h-10" />
+          ) : status === "authenticated" ? (
             <DropdownMenuDemo
               avatar={session?.user?.avatar}
               pkr={session?.user?.balancePkr}
               eth={session?.user?.balanceEth}
             />
-          </>
-        ) : (
-          <Button className="hidden lg:flex" href="/sign-in">
-            Sign in
-          </Button>
-        )}
+          ) : (
+            <Button className="hidden lg:flex" href="/sign-in">
+              Sign in
+            </Button>
+          )}
+        </div>
 
         <Button
           className="ml-auto lg:hidden"

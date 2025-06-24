@@ -25,7 +25,7 @@ const Step2 = ({
     <div className="mt-4">
       <h3 className="text-2xl font-bold mb-8">Personal Details</h3>
       <div className="mt-4">
-        <div className="flex gap-2 justify-between mt-4">
+        <div className="flex gap-4 md:gap-8 justify-between mt-4">
           <Input
             type="text"
             hint={"John"}
@@ -45,7 +45,7 @@ const Step2 = ({
             handler={handler}
           />
         </div>
-        <div className="flex gap-2 justify-between mt-4">
+        <div className="flex gap-4 md:gap-8 justify-between mt-4">
           <Input
             type="text"
             hint={"Johnboe12"}
@@ -64,7 +64,7 @@ const Step2 = ({
             classes="w-1/2"
           />
         </div>
-        <div className="flex gap-2 justify-between mt-4">
+        <div className="flex gap-4 md:gap-8 justify-between mt-4">
           <Input
             type="password"
             hint={"********"}

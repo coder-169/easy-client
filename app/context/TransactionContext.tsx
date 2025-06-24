@@ -1,16 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-
 import { contractABI, contractAddress } from "../utils/constants";
 import { getSession, useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 export const TransactionContext = React.createContext({});
-
-const ethereum = window.ethereum;
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 const createEthereumContract = () => {
+  // Move window access inside function
+  if (typeof window === "undefined") return null;
+  const { ethereum } = window;
+
+  if (!ethereum) return null;
+
   const provider = new ethers.providers.Web3Provider(ethereum);
   const signer = provider.getSigner();
   const transactionsContract = new ethers.Contract(
@@ -32,10 +41,15 @@ export const TransactionsProvider = ({ children }) => {
   });
   const [currentAccount, setCurrentAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [transactionCount, setTransactionCount] = useState(
-    localStorage.getItem("transactionCount")
-  );
+  const [transactionCount, setTransactionCount] = useState("");
   const [transactions, setTransactions] = useState([]);
+
+  // Initialize transactionCount from localStorage only on client side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setTransactionCount(localStorage.getItem("transactionCount") || "");
+    }
+  }, []);
 
   const handleChangeData = (e) => {
     setformData((prevState) => ({
@@ -45,6 +59,8 @@ export const TransactionsProvider = ({ children }) => {
   };
 
   const getAllTransactions = async () => {
+    if (typeof window === "undefined") return null;
+    const { ethereum } = window;
     try {
       if (ethereum) {
         const transactionsContract = createEthereumContract();
@@ -79,6 +95,8 @@ export const TransactionsProvider = ({ children }) => {
   const checkIfWalletIsConnected = async () => {
     console.log("check wallet");
     try {
+      if (typeof window === "undefined") return null;
+      const { ethereum } = window;
       if (!ethereum) return alert("Please install MetaMask.");
       const accounts = await ethereum.request({ method: "eth_accounts" });
 
@@ -114,6 +132,8 @@ export const TransactionsProvider = ({ children }) => {
 
   const checkIfTransactionsExists = async () => {
     try {
+      if (typeof window === "undefined") return null;
+      const { ethereum } = window;
       if (ethereum) {
         const transactionsContract = createEthereumContract();
         const currentTransactionCount =
@@ -133,6 +153,8 @@ export const TransactionsProvider = ({ children }) => {
   const connectWallet = async () => {
     console.log("called");
     try {
+      if (typeof window === "undefined") return null;
+      const { ethereum } = window;
       if (!ethereum) return alert("Please install MetaMask.");
 
       const accounts = await ethereum.request({
@@ -149,6 +171,8 @@ export const TransactionsProvider = ({ children }) => {
 
   const sendTransaction = async () => {
     try {
+      if (typeof window === "undefined") return null;
+      const { ethereum } = window;
       toast.info("Transaction Processed!");
       if (ethereum) {
         const { addressTo, amount, keyword, message } = formData;
@@ -202,6 +226,8 @@ export const TransactionsProvider = ({ children }) => {
     message = "Conversion to Pkr"
   ) => {
     try {
+        if (typeof window === "undefined") return null;
+  const { ethereum } = window;
       toast.info("Converting!");
       if (ethereum) {
         const accounts = await ethereum.request({ method: "eth_accounts" });
@@ -211,8 +237,8 @@ export const TransactionsProvider = ({ children }) => {
         const fee = parseFloat(amount) * 0.05;
         const total = parseFloat(amount) + fee;
         if (total > parseFloat(ethBalance)) {
-          toast.error('Insufficient balance!')
-          return false
+          toast.error("Insufficient balance!");
+          return false;
         }
         const transactionsContract = createEthereumContract();
         const parsedAmount = ethers.utils.parseEther(amount);

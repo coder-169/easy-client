@@ -72,6 +72,7 @@ const Page = () => {
       if (data.success) {
         router.push("/sign-in");
         toast.success("Account verified successfully!");
+        setIsVerified(true);
       } else {
         toast.error(data.message);
       }
@@ -84,9 +85,17 @@ const Page = () => {
   const handlePasswordUpdate = async () => {
     setIsLoading(true);
     try {
-      // Sending Code
-      setIsVerified(true);
-      toast.success("Password updated successfully!");
+      const resp = await fetch("/api/user/password", {
+        method: "POST",
+        body: JSON.stringify(passwords)
+      });
+      const data = await resp.json();
+      if (data.success) {
+        router.push("/sign-in");
+        toast.success("Account verified successfully!");
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
     } finally {
       setIsLoading(false);

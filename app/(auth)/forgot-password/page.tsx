@@ -99,7 +99,6 @@ const Page = () => {
         body: JSON.stringify({ email, ...passwords }),
       });
       const data = await resp.json();
-      console.log(resp);
       if (data.success) {
         router.push("/sign-in");
         toast.success("Password updated successfully!");

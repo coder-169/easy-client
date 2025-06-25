@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
     };
     await transporter.sendMail(mailOptions);
 
-    console.log(code);
     return NextResponse.json({ code, success: true, email });
     //
   } catch (error) {

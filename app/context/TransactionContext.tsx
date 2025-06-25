@@ -81,19 +81,16 @@ export const TransactionsProvider = ({ children }) => {
           })
         );
 
-        console.log(structuredTransactions);
-
         setTransactions(structuredTransactions);
       } else {
         console.log("Ethereum is not present");
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 
   const checkIfWalletIsConnected = async () => {
-    console.log("check wallet");
     try {
       if (typeof window === "undefined") return null;
       const { ethereum } = window;
@@ -104,7 +101,6 @@ export const TransactionsProvider = ({ children }) => {
       const balance = await provider.getBalance(accounts[0]);
       const ethBalance = ethers.utils.formatEther(balance); // in ETH
       const fastSession = await getSession();
-      console.log("enter zone");
       await fetch("/api/user/wallet", {
         method: "POST",
         headers: {
@@ -117,7 +113,6 @@ export const TransactionsProvider = ({ children }) => {
         }),
       });
 
-      console.log(accounts[0]);
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
         getAllTransactions();
@@ -125,9 +120,8 @@ export const TransactionsProvider = ({ children }) => {
         console.log("No accounts found");
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
-    console.log("checked");
   };
 
   const checkIfTransactionsExists = async () => {
@@ -145,13 +139,11 @@ export const TransactionsProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.log(error);
       throw new Error("No ethereum object");
     }
   };
 
   const connectWallet = async () => {
-    console.log("called");
     try {
       if (typeof window === "undefined") return null;
       const { ethereum } = window;
@@ -160,11 +152,9 @@ export const TransactionsProvider = ({ children }) => {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log(accounts);
       setCurrentAccount(accounts[0]);
       window.location.reload();
     } catch (error) {
-      console.log(error);
       throw new Error("No ethereum object");
     }
   };
@@ -190,19 +180,16 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
-        console.log(username);
         const transactionHash = await transactionsContract.addToBlockchain(
           addressTo,
           parsedAmount,
           message,
-          keyword,
+          keyword
         );
 
         setIsLoading(true);
-        console.log(`Loading - ${transactionHash.hash}`);
 
         await transactionHash.wait();
-        console.log(`Success - ${transactionHash.hash}`);
         toast.success(`Transaction Successful`);
         setIsLoading(false);
 
@@ -215,8 +202,6 @@ export const TransactionsProvider = ({ children }) => {
         console.log("No ethereum object");
       }
     } catch (error) {
-      console.log(error);
-
       throw new Error("No ethereum object");
     }
   };
@@ -258,14 +243,12 @@ export const TransactionsProvider = ({ children }) => {
           process.env.NEXT_PUBLIC_BANK_WALLET!,
           parsedAmount,
           message,
-          keyword,
+          keyword
         );
 
         setIsLoading(true);
-        console.log(`Loading - ${transactionHash.hash}`);
 
         await transactionHash.wait();
-        console.log(`Success - ${transactionHash.hash}`);
         setIsLoading(false);
 
         const transactionsCount =
@@ -278,7 +261,6 @@ export const TransactionsProvider = ({ children }) => {
         return false;
       }
     } catch (error) {
-      console.log(error);
       throw new Error("No ethereum object");
     }
   };

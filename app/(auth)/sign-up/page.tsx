@@ -28,7 +28,6 @@ const SingUp = () => {
   });
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target);
     if (e.target.name === "cnic") {
       let value = e.target.value.replace(/\D/g, ""); // Remove all non-digits
 
@@ -115,7 +114,6 @@ const SingUp = () => {
   const signUpHandler = async () => {
     const validated = validateInputs();
     if (!validated) return;
-    console.log(validated);
     setIsLoading(true);
     try {
       const resp = await fetch("/api/auth/register", {

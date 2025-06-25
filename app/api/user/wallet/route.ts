@@ -8,7 +8,6 @@ export async function POST(req: NextResponse) {
   const id = getHeaders.get("id");
   try {
     const { balance, address } = await req.json();
-    console.log(balance, address);
 
     const objectId = new mongoose.Types.ObjectId(id);
     const user = await Account.findOne({ accountId: objectId });
@@ -21,13 +20,11 @@ export async function POST(req: NextResponse) {
     user.address = address;
     user.balanceEth = parseFloat(balance);
     await user.save();
-    console.log(user);
     return NextResponse.json({
       success: true,
       message: "Balance found successfully",
     });
   } catch (error: unknown) {
-    console.log(error);
     return NextResponse.json(
       {
         success: false,

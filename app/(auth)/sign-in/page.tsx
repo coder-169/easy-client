@@ -42,20 +42,16 @@ const SignIn = () => {
       })
         .then((dt) => {
           if (dt?.ok) {
-            console.log(dt);
             toast.success("Logged in Successfully");
             router.push("/");
           } else {
-            console.log(dt?.error);
             toast.error(dt?.error);
           }
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Invalid Credentials");
         });
     } catch (error) {
-      console.error("Error during sign-in:", error);
       toast.error("An error occurred while signing in. Please try again.");
     } finally {
     }

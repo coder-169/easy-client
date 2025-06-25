@@ -33,13 +33,11 @@ const AuthForm = ({ type }: { type: string }) => {
         name: user.username,
       }).then((dt) => {
         if(dt?.ok){
-          console.log(dt)
           toast.success('Logged in Successfully')
         }else{
-          console.log(dt?.error)
+          toast.error(dt?.error)
         }
       }).catch((err) => {
-        console.log(err)
         toast.error("Invalid Credentials")
       })
     } else {
@@ -56,8 +54,6 @@ const AuthForm = ({ type }: { type: string }) => {
         console.error(data.message);
       }
     }
-    console.log(type);
-    console.log(user);
     setIsLoading(false);
   };
 

@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { code, email } = await req.json();
-    console.log(code, email);
     const user = await User.findOne({ email });
     if (!user)
       return NextResponse.json(

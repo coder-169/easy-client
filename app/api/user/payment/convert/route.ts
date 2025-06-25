@@ -24,8 +24,6 @@ export async function POST(req: NextRequest) {
     const ethToPkr = ethResponse.data.ethereum.pkr * parseFloat(amount);
     const accountId = new mongoose.Types.ObjectId(user._id);
     const account = await Account.findOne({ accountId });
-    console.log(accountId)
-    console.log(account)
 
     account.balancePkr += ethToPkr;
     account.balanceEth -= parseFloat(amount);

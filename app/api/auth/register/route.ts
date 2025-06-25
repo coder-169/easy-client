@@ -23,7 +23,6 @@ export async function POST(req: NextResponse) {
   try {
     await dbConnect();
     const body = await req.json();
-    console.log(body);
     let user = await User.findOne({
       username: body.username,
       email: body.email,
@@ -60,7 +59,6 @@ export async function POST(req: NextResponse) {
       message: "User created successfully",
     });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       {
         success: false,

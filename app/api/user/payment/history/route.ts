@@ -20,7 +20,6 @@ export async function GET() {
     const sentTransactions = await Transaction.find({
       userId: objectId,
     });
-    console.log(sentTransactions)
     const myAccount = await Account.findOne({
       accountId: objectId,
     });
@@ -49,7 +48,6 @@ export async function GET() {
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
-    console.log(allTransactions);
     return NextResponse.json({
       success: true,
       message: "Transactions found",

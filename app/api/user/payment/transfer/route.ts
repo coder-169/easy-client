@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 export async function POST(req: NextResponse) {
   try {
     const body = await req.json();
-    console.log(body);
     const getHeaders = await headers();
     const id = getHeaders.get("id");
     if (!id)

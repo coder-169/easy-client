@@ -54,7 +54,6 @@ const handler = NextAuth({
         //   credentials.password,
         //   user.password
         // );
-        console.log(passMatch);
         if (!passMatch) throw new Error("Invalid credentials");
 
         return user;
@@ -73,7 +72,6 @@ const handler = NextAuth({
       session: { user: { email: string; username: string } };
     }) {
       await dbConnect();
-      console.log(session.user);
       // Enhanced pipeline to get complete user data with account info
       const pipeline = [
         {
@@ -118,7 +116,6 @@ const handler = NextAuth({
         throw new Error("User not found");
       }
 
-      console.log(result);
 
       // Merge all data into the session.user object
       session.user = {

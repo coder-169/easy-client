@@ -73,7 +73,11 @@ const SignIn = () => {
             href={"/"}
             className="flex cursor-pointer items-center gap-1 px-4"
           >
-            <Logo />
+            {" "}
+            <h3 className="text-xl text-n-1 font-bold">
+              Easy
+              <span className="text-color-1">Krypt</span>
+            </h3>
           </Link>
           <h3 className="text-3xl font-bold text">Sign In</h3>
           <CustomInput

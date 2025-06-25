@@ -33,7 +33,7 @@ const Hero = () => {
           <h1 className="h1 mb-6">
             Manage and Send Crypto Across the World&nbsp;
             <span className="inline-block relative">
-              EasyCrypt{" "}
+              EasyKrypt{" "}
               <Image
                 src={curve}
                 className="absolute top-full left-0 w-full xl:-mt-2"
@@ -45,7 +45,7 @@ const Hero = () => {
           </h1>
           <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
             Explore the crypto world. Buy and sell cryptocurrencies easily on
-            EasyCrypt.
+            EasyKrypt.
           </p>
           {status === "authenticated" ? (
             !currentAccount && (

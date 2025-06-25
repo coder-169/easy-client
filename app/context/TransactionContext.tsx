@@ -190,15 +190,12 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
-        const fastSession = await getSession();
-        const username = fastSession?.user?.username;
-        console.log(username)
+        console.log(username);
         const transactionHash = await transactionsContract.addToBlockchain(
           addressTo,
           parsedAmount,
           message,
           keyword,
-          username
         );
 
         setIsLoading(true);
@@ -257,14 +254,11 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
-        const fastSession = await getSession();
-        const username = fastSession?.user.username;
         const transactionHash = await transactionsContract.addToBlockchain(
           process.env.NEXT_PUBLIC_BANK_WALLET!,
           parsedAmount,
           message,
           keyword,
-          username
         );
 
         setIsLoading(true);

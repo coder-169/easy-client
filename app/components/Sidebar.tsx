@@ -36,7 +36,7 @@ const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: 
       )}
 
       <Link href={"/"} className="my-4 md:my-12 block mx-auto" onClick={handleLinkClick}>
-        <h3 className="text-2xl md:text-4xl text-n-1 font-bold">Easy Crypt</h3>
+        <h3 className="text-2xl md:text-4xl text-n-1 font-bold">Easy <span className="text-color-1">Krypt</span></h3>
       </Link>
 
       <nav className="flex-1">

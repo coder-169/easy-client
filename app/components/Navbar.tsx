@@ -165,7 +165,7 @@ const Header = () => {
           /> */}
           <h3 className="text-xl md:text-2xl text-n-1 font-bold">
             Easy
-            <span className="text-color-1">Crypt</span>
+            <span className="text-color-1">Krypt</span>
           </h3>
         </a>
 

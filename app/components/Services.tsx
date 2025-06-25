@@ -23,7 +23,7 @@ const Services = () => {
     <Section id="how-to-use">
       <div className="container">
         <HeroHeading
-          title="EasyCrypt made for Crypto Enthusiast."
+          title="EasyKrypt made for Crypto Enthusiast."
           text="It unlocks the potential of blockchain technology."
         />
 

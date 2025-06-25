@@ -87,14 +87,12 @@ declare type Transaction = {
   receiverAcc: string;
 };
 declare type TransactionEthereum = {
-  from: string;
-  receiver: string;
+  addressTo: string;
+  addressFrom: string;
   amount: string;
   message: string;
   timestamp: string;
   keyword: string;
-  username: string;
-  tx_hash:string;
 };
 
 declare type Bank = {

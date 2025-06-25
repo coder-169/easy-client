@@ -27,6 +27,7 @@ const Page = () => {
 
       if (isConverted) {
         const resp = await fetch("/api/user/payment/convert", {
+          method: "POST",
           headers: {
             id: fastSession?.user?._id,
           },
@@ -37,6 +38,7 @@ const Page = () => {
         });
         const data = await resp.json();
         if (data.success) {
+          window.location.reload();
           toast.message(data.message);
         } else {
           toast.error(data.message);
@@ -74,7 +76,7 @@ const Page = () => {
   };
 
   return (
-      <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
+    <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
       <Heading
         title="Currency Conversion"
         subtitle="Convert your Eth (Ethereum) to Pakistani Rupees or Pkr to Ethereum"
@@ -142,6 +144,7 @@ const Page = () => {
                     <AnimatedCounter
                       duration={1}
                       amount={session?.user?.balanceEth}
+                      classes="text-white"
                     />{" "}
                     <span className="text-blue-400 text-sm">ETH</span>
                   </span>
@@ -154,6 +157,7 @@ const Page = () => {
                       <AnimatedCounter
                         duration={2}
                         amount={session?.user?.balancePkr}
+                        classes="text-white"
                       />{" "}
                       <span className="text-blue-400 text-sm">PKR</span>
                     </span>

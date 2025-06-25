@@ -20,29 +20,6 @@ import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    firstName: "Sajid",
-    lastName: "Doongah",
-    email: "mrsaad2129@gmail.com",
-    dob: "2025-06-17",
-    cnic: "45303-7186252-3",
-  });
-
-  // Mock account data - replace with actual data from your context/API
-  const accountData = {
-    accountNumber: 24539582568,
-    balancePkr: 55000,
-    balanceEth: 0,
-    createdAt: "2025-06-08",
-  };
-
-  const handleSave = () => {
-    // Add your save logic here
-    toast.success("Profile updated successfully");
-    setIsEditing(false);
-  };
-
   return (
     <ProtectedRoute>
       <div className="my-8 mx-4 md:mx-16">
@@ -52,7 +29,6 @@ const ProfilePage = () => {
             subtitle="View and manage your personal and account information"
           />
           <Button
-            onClick={() => setIsEditing(true)}
             white
             href="/settings"
             className="flex items-center gap-2"
@@ -93,69 +69,44 @@ const ProfilePage = () => {
                     <label className="text-sm text-n-3 mb-1 block">
                       First Name
                     </label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={userData.firstName}
-                        onChange={(e) =>
-                          setUserData({
-                            ...userData,
-                            firstName: e.target.value,
-                          })
-                        }
-                        className="bg-n-8 border border-n-6 rounded-lg px-4 py-2 w-full text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    ) : (
-                      <p className="bg-n-8 p-2 text-n-2 rounded-lg">
-                        {userData.firstName}
-                      </p>
-                    )}
+                    <p className="bg-n-8 p-2 text-n-2 rounded-lg">
+                      {session?.user?.firstName}
+                    </p>
                   </div>
 
                   <div>
                     <label className="text-sm text-n-3 mb-1 block">
                       Last Name
                     </label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={userData.lastName}
-                        onChange={(e) =>
-                          setUserData({ ...userData, lastName: e.target.value })
-                        }
-                        className="bg-n-8 border border-n-6 rounded-lg px-4 py-2 w-full text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    ) : (
-                      <p className="bg-n-8 p-2 text-n-2 rounded-lg">
-                        {userData.lastName}
-                      </p>
-                    )}
+                    <p className="bg-n-8 p-2 text-n-2 rounded-lg">
+                      {session?.user?.lastName}
+                    </p>
                   </div>
 
                   <div className="md:col-span-2">
                     <label className="text-sm text-n-3 mb-1 flex items-center gap-1">
-                      <FiMail /> Email
+                   Email
                     </label>
                     <p className="bg-n-8 p-2 text-n-2 rounded-lg opacity-80">
-                      {userData.email}
+                      {session?.user?.email}
                     </p>
                   </div>
 
                   <div>
                     <label className="text-sm text-n-3 mb-1 flex items-center gap-1">
-                      <FiCalendar /> Date of Birth
+                     Date of Birth
                     </label>
                     <p className="bg-n-8 p-2 text-n-2 rounded-lg">
-                      {new Date(userData.dob).toLocaleDateString()}
+                      {new Date(session?.user?.dob).toLocaleDateString()}
                     </p>
                   </div>
 
                   <div>
                     <label className="text-sm text-n-3 mb-1 flex items-center gap-1">
-                      <FiLock /> CNIC
+                      CNIC
                     </label>
                     <p className="bg-n-8 p-2 text-n-2 rounded-lg">
-                      {userData.cnic}
+                      {session?.user?.cnic}
                     </p>
                   </div>
                 </div>
@@ -175,7 +126,7 @@ const ProfilePage = () => {
                   Account Number
                 </label>
                 <p className="bg-n-8 p-3 text-n-2 rounded-lg font-mono">
-                  {accountData.accountNumber}
+                  {session?.user?.accountNumber}
                 </p>
               </div>
 
@@ -185,7 +136,7 @@ const ProfilePage = () => {
                 </label>
                 <div className="bg-n-8 p-3 text-n-2 rounded-lg">
                   <AnimatedCounter
-                    amount={accountData.balanceEth}
+                    amount={session?.user?.balanceEth}
                     prefix="ETH "
                     classes="font-semibold"
                   />
@@ -198,7 +149,7 @@ const ProfilePage = () => {
                 </label>
                 <div className="bg-n-8 p-3 text-n-2 rounded-lg">
                   <AnimatedCounter
-                    amount={accountData.balancePkr}
+                    amount={session?.user?.balancePkr}
                     prefix="PKR "
                     classes="font-semibold"
                   />
@@ -210,7 +161,7 @@ const ProfilePage = () => {
                   Member Since
                 </label>
                 <p className="bg-n-8 p-3 text-n-2 rounded-lg">
-                  {new Date(accountData.createdAt).toLocaleDateString()}
+                  {new Date(session?.user?.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>

@@ -27,17 +27,21 @@ const handler = NextAuth({
         },
       },
       async authorize(credentials: { username: string; password: string }) {
-        console.log("creds", credentials);
         await dbConnect();
 
         if (!credentials.username || !credentials.password) {
           throw new Error("Missing credentials");
         }
-        console.log("her", credentials);
         const user = await User.findOne({
-          username: { $regex: credentials.username, $options: "i" },
+          $or: [
+            {
+              username: { $regex: credentials.username, $options: "i" },
+            },
+            {
+              email: { $regex: credentials.username, $options: "i" },
+            },
+          ],
         });
-        console.log("user", user);
         if (!user) {
           throw new Error("Invalid credentials");
         }
@@ -66,15 +70,18 @@ const handler = NextAuth({
     async session({
       session,
     }: {
-      session: { user: { email: string; name: string } };
+      session: { user: { email: string; username: string } };
     }) {
       await dbConnect();
-
+      console.log(session.user);
       // Enhanced pipeline to get complete user data with account info
       const pipeline = [
         {
           $match: {
-            $or: [{ email: session.user.email }, { name: session.user.name }],
+            $or: [
+              { email: session.user.email },
+              { username: session.user.username },
+            ],
           },
         },
         {
@@ -111,6 +118,8 @@ const handler = NextAuth({
         throw new Error("User not found");
       }
 
+      console.log(result);
+
       // Merge all data into the session.user object
       session.user = {
         ...session.user, // Keep original session data
@@ -118,27 +127,6 @@ const handler = NextAuth({
       };
 
       return session;
-    },
-    async signIn({ user, profile, account }) {
-      if (!profile) return true;
-      const { email_verified, given_name, family_name } = profile;
-      if (!email_verified) throw new Error("Email is not verified");
-      const { name, email, image } = user;
-      await dbConnect();
-      const existingUser = await User.findOne({ $or: [{ email }, { name }] });
-      if (!existingUser) {
-        await User.create({
-          name,
-          email,
-          first_name: given_name,
-          last_name: family_name,
-          profileImage: image,
-          isVerified: true,
-          role: "user",
-          provider: account.provider,
-        });
-      }
-      return true;
     },
   },
   debug: process.env.NODE_ENV === "development",

@@ -82,7 +82,7 @@ declare type Transaction = {
   email: string;
   amount: number;
   status: string;
-  $createdAt: string;
+  createdAt: string;
   senderAcc: string;
   receiverAcc: string;
 };

@@ -3,6 +3,7 @@ import User from "@/app/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { headers } from "next/headers";
+import mongoose from "mongoose";
 export async function POST(req: NextRequest) {
   const getHeaders = await headers();
   const id = getHeaders.get("id");
@@ -21,7 +22,10 @@ export async function POST(req: NextRequest) {
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=pkr"
     );
     const ethToPkr = ethResponse.data.ethereum.pkr * parseFloat(amount);
-    const account = await Account.findOne({ account: user._id });
+    const accountId = new mongoose.Types.ObjectId(user._id);
+    const account = await Account.findOne({ accountId });
+    console.log(accountId)
+    console.log(account)
 
     account.balancePkr += ethToPkr;
     account.balanceEth -= parseFloat(amount);

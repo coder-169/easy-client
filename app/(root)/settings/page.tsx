@@ -4,13 +4,15 @@ import CustomInput from "@/app/components/CustomInput";
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUnlock } from "react-icons/fa";
 import Heading from "@/app/components/Heading";
-import { getSession, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const [type, setType] = useState("password");
   const [loading, setLoading] = useState(true);
   const [values, setValues] = useState({
@@ -55,7 +57,7 @@ const Page = () => {
   const uploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "your_upload_preset");
+    formData.append("upload_preset", "easykcrypt");
 
     try {
       const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
@@ -64,6 +66,7 @@ const Page = () => {
         body: formData,
       });
       const data = await response.json();
+      console.log(data);
       return data.secure_url;
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -80,11 +83,13 @@ const Page = () => {
       if (!url) {
         throw new Error("Image upload failed");
       }
+      const fastSession = await getSession();
 
       const resp = await fetch("/api/user/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          id: fastSession?.user?._id,
         },
         body: JSON.stringify({ avatar: url }),
       });
@@ -135,11 +140,12 @@ const Page = () => {
 
     setBtnLoading(true);
     try {
+      const fastSession = await getSession();
       const resp = await fetch("/api/user/password", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          headers: session?.user?._id,
+          id: fastSession?.user?._id,
         },
         body: JSON.stringify({
           oldPassword: passwords.oldPass,
@@ -153,6 +159,8 @@ const Page = () => {
       }
 
       toast.success("Password updated successfully");
+      signOut();
+      router.push("/sign-in");
       setPasswords({
         oldPass: "",
         newPass: "",
@@ -183,7 +191,10 @@ const Page = () => {
           <Skeleton className="h-[70vh] w-full" />
         ) : (
           <>
-            <form className="mt-6 md:mt-12" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="mt-6 md:mt-12"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <div className="space-y-8 md:space-y-12">
                 <div className="border-b border-gray-900/10 pb-8 md:pb-12">
                   <h2 className="text-lg md:text-xl font-semibold leading-7 text-n-1">
@@ -224,7 +235,29 @@ const Page = () => {
                       </label>
                       <div className="mt-2 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-x-3">
                         <div className="flex-shrink-0">
-                          {avatarPreview ? (
+                          {session?.user?.avatar ? (
+                            <>
+                              <label
+                                htmlFor="avatar-upload"
+                                className="w-full md:w-auto"
+                              >
+                                <Image
+                                  src={session.user.avatar}
+                                  alt="Profile"
+                                  width={192}
+                                  height={192}
+                                  className="h-32 w-32 md:h-48 md:w-48 rounded-full object-cover"
+                                />
+                              </label>
+                              <input
+                                id="avatar-upload"
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                              />
+                            </>
+                          ) : avatarPreview ? (
                             <Image
                               src={avatarPreview}
                               alt="Profile"
@@ -234,39 +267,39 @@ const Page = () => {
                             />
                           ) : (
                             <div className="h-32 w-32 md:h-48 md:w-48 rounded-full bg-gray-300 flex items-center justify-center">
-                              <svg
-                                className="h-24 w-24 text-gray-500"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                aria-hidden="true"
+                              <label
+                                htmlFor="avatar-upload"
+                                className="w-full md:w-auto"
                               >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
+                                <svg
+                                  className="h-48 w-48 text-gray-500"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </label>
+                              <input
+                                id="avatar-upload"
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                              />
                             </div>
                           )}
                         </div>
                         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                          <label htmlFor="avatar-upload" className="w-full md:w-auto">
-                            <Button white className="w-full md:w-auto">
-                              Change
-                            </Button>
-                            <input
-                              id="avatar-upload"
-                              type="file"
-                              className="hidden"
-                              accept="image/*"
-                              onChange={handleAvatarChange}
-                            />
-                          </label>
                           {avatarFile && (
                             <Button
                               onClick={updateAvatar}
                               white
-                              className="w-full md:w-auto"
+                              className="w-64 md:w-auto"
                               loading={btnLoading}
                             >
                               Save Avatar
@@ -361,7 +394,10 @@ const Page = () => {
               </div>
             </form>
             <div className="my-6 md:my-8 border border-gray-700" />
-            <form className="mt-6 md:mt-12" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="mt-6 md:mt-12"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <div className="space-y-8 md:space-y-12">
                 <div className="border-b border-gray-900/10 pb-8 md:pb-12">
                   <h2 className="text-lg md:text-xl font-semibold leading-7 text-n-1">
@@ -390,14 +426,16 @@ const Page = () => {
                           handler={passwordChangeHandler}
                           classes="pl-10 w-full"
                         />
-                        <button
-                          className="absolute top-[51px] right-4 text-white"
-                          onClick={() =>
-                            setType(type === "password" ? "text" : "password")
-                          }
-                        >
-                          {type === "text" ? <FaEyeSlash /> : <FaEye />}
-                        </button>
+                        {passwords.oldPass.length > 0 && (
+                          <button
+                            className="absolute top-[20px] right-4 text-white"
+                            onClick={() =>
+                              setType(type === "password" ? "text" : "password")
+                            }
+                          >
+                            {type === "text" ? <FaEyeSlash /> : <FaEye />}
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="sm:col-span-6 md:sm:col-span-3">

@@ -96,7 +96,7 @@ const TransactionsTablePkr = () => {
                   isDebit || amount < 0 ? "text-[#f04438]" : "text-[#039855]"
                 }`}
               >
-                {isDebit ? `-${amount}` : isCredit ? amount : amount}
+                {isDebit ? `${amount}` : isCredit ? amount : amount}
               </TableCell>
               <TableCell className="pl-2 pr-10 text-n-1">
                 {t.status === "Paid" ? (
@@ -110,7 +110,7 @@ const TransactionsTablePkr = () => {
                 )}
               </TableCell>
               <TableCell className="min-w-32 pl-2 pr-10 text-n-1">
-                {formatDateTime(new Date(t.$createdAt)).dateTime}
+                {formatDateTime(new Date(t.createdAt)).dateTime}
               </TableCell>
             </TableRow>
           );

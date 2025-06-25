@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 import Account from "@/app/models/Account";
 import Transaction from "@/app/models/Transaction";
 import User from "@/app/models/User";

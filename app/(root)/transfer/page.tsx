@@ -28,18 +28,7 @@ const Page = () => {
       const fastSession = await getSession();
       if (currency.toLowerCase() === "eth") {
         sendTransaction();
-        // const resp = await fetch("/api/user/payment/transfer", {
-        //   method: "post",
-        //   body: JSON.stringify({
-        //     ...transfer,
-        //     address: transfer.account,
-        //     currency,
-        //   }),
-        // });
-        // const data = await resp.json();
-        // console.log(data);
-        // if (data.success) toast.success("Transaction Processed");
-        // else toast.error("Transaction failed");
+        
       } else {
         setLoading(true);
         toast.info("Processing Transaction!");
@@ -70,7 +59,7 @@ const Page = () => {
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 

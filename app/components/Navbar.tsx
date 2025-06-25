@@ -12,6 +12,8 @@ import { background } from "../assets";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { MdDashboardCustomize } from "react-icons/md";
+import { PiSignOutBold } from "react-icons/pi";
+import { MdOutlineDashboardCustomize } from "react-icons/md";
 
 // Shad
 import {
@@ -32,10 +34,14 @@ function DropdownMenuDemo({
   avatar,
   eth,
   pkr,
+  username,
+  email,
 }: {
   avatar: string;
   eth: string;
   pkr: string;
+  username: string;
+  email: string;
 }) {
   const logout = () => {
     signOut({
@@ -49,7 +55,13 @@ function DropdownMenuDemo({
       <DropdownMenuTrigger asChild>
         <button className="outline-none">
           {avatar ? (
-            <Image src={avatar} width={24} height={24} alt="Username" />
+            <Image
+              src={avatar}
+              width={24}
+              height={24}
+              className="rounded-full"
+              alt="Username"
+            />
           ) : (
             <FaUserCircle className="w-6 h-6" />
           )}
@@ -58,15 +70,25 @@ function DropdownMenuDemo({
       <DropdownMenuContent className="w-56 bg-n-7 !-right-4 border-none ring-0 absolute top-4">
         <div className="mt-4 mb-8 flex justify-center flex-col items-center gap-2">
           {avatar ? (
-            <Image src={avatar} width={96} height={96} alt="Username" />
+            <Image
+              src={avatar}
+              width={96}
+              height={96}
+              className="rounded-full"
+              alt="Username"
+            />
           ) : (
             <FaUserCircle className="w-24 h-24" />
           )}
+          <div className="mb-2 text-center">
+            <h4 className="text-n-1">{username}</h4>
+            <span className="text-sm text-n-2">{email}</span>
+          </div>
           <div className="flex gap-2 mt-2 w-full">
             <span className="border-r border-r-gray-200 pr-2 w-1/2 text-right text-white text-sm">
               Rs. {pkr}
             </span>
-            <span className=" w-1/2 text-left text-white text-sm">
+            <span className="w-1/2 text-left text-white text-sm">
               Eth. {eth}
             </span>
           </div>
@@ -76,7 +98,7 @@ function DropdownMenuDemo({
             <span className="px-2">Dashboard</span>
           </Link>
           <DropdownMenuShortcut>
-            <MdDashboardCustomize fontSize={24} />
+            <MdOutlineDashboardCustomize fontSize={20} />
           </DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-n-5 " />
@@ -86,7 +108,7 @@ function DropdownMenuDemo({
         >
           <span className="px-2">Log out</span>
           <DropdownMenuShortcut>
-            <FaSignOutAlt fontSize={24} />
+            <PiSignOutBold fontSize={20} />
           </DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -135,12 +157,16 @@ const Header = () => {
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
         <a className="block w-[12rem] xl:mr-8" href="#hero">
-          <Image
+          {/* <Image
             src={"/logo-light.png"}
             width={190}
             height={40}
             alt="Brainwave"
-          />
+          /> */}
+          <h3 className="text-xl md:text-2xl text-n-1 font-bold">
+            Easy
+            <span className="text-color-1">Crypt</span>
+          </h3>
         </a>
 
         <nav
@@ -166,7 +192,7 @@ const Header = () => {
           </div>
           <HamburgerMenu />
         </nav>
-        <div className="hidden md:flex gap-4 items-center">
+        <div className="hidden lg:flex gap-4 items-center">
           {status === "loading" ? (
             <Skeleton className="w-[120px] h-10" />
           ) : status === "authenticated" ? (
@@ -184,8 +210,10 @@ const Header = () => {
           ) : status === "authenticated" ? (
             <DropdownMenuDemo
               avatar={session?.user?.avatar}
-              pkr={session?.user?.balancePkr}
-              eth={session?.user?.balanceEth}
+              pkr={session?.user?.balancePkr.toFixed(2)}
+              eth={session?.user?.balanceEth.toFixed(3)}
+              username={session?.user?.username}
+              email={session?.user?.email}
             />
           ) : (
             <Button className="hidden lg:flex" href="/sign-in">

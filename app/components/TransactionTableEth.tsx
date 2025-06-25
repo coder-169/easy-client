@@ -40,7 +40,7 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
 const TransactionsTableEth = () => {
   // const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const { transactions, currentAccount } = useContext(TransactionContext);
-  
+  console.log(transactions)
   return (
     <Table className="rounded-lg">
       <TableHeader className="bg-n-7 text-n-2 !rounded-lg">
@@ -50,7 +50,7 @@ const TransactionsTableEth = () => {
           <TableHead className="px-2">Amount</TableHead>
           <TableHead className="px-2">Status</TableHead>
           <TableHead className="px-2">Date</TableHead>
-          <TableHead className="px-2 max-md:hidden">Currency</TableHead>
+          <TableHead className="px-2 max-md:hidden">Hash</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

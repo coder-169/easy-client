@@ -27,13 +27,18 @@ const SignIn = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
   // 2. Define a submit handler.
-  const onSubmitSign = async () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
+
+    await onSubmitSign();
+    setIsLoading(false);
+  };
+  const onSubmitSign = async () => {
     try {
       signIn("credentials", {
         redirect: false,
-        ...user,
         name: user.username,
+        ...user,
       })
         .then((dt) => {
           if (dt?.ok) {
@@ -53,7 +58,6 @@ const SignIn = () => {
       console.error("Error during sign-in:", error);
       toast.error("An error occurred while signing in. Please try again.");
     } finally {
-      setIsLoading(false);
     }
   };
   const [type, setType] = useState("password");
@@ -119,7 +123,7 @@ const SignIn = () => {
           </Link>
           <div className="flex flex-col gap-4">
             <Button
-              onClick={onSubmitSign}
+              onClick={handleSubmit}
               loading={isLoading}
               disabled={isLoading || !user.username || !user.password}
               white

@@ -8,6 +8,8 @@ import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
 import { ScrollParallax } from "react-just-parallax";
 import { useRouter } from "next/navigation";
+import { getSession } from "next-auth/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,8 +72,7 @@ const Page = () => {
       });
       const data = await resp.json();
       if (data.success) {
-        router.push("/sign-in");
-        toast.success("Account verified successfully!");
+        toast.success("Code verified successfully!");
         setIsVerified(true);
       } else {
         toast.error(data.message);
@@ -83,16 +84,25 @@ const Page = () => {
     }
   };
   const handlePasswordUpdate = async () => {
-    setIsLoading(true);
     try {
+      if (passwords.confirmPassword !== passwords.newPassword)
+        return toast.error("Both passwords should match!");
+      if (!email) {
+        setCodeSent(false);
+        setCode("");
+        setIsVerified(false);
+        return toast.error("Re enter email!");
+      }
+      setIsLoading(true);
       const resp = await fetch("/api/user/password", {
         method: "POST",
-        body: JSON.stringify(passwords)
+        body: JSON.stringify({ email, ...passwords }),
       });
       const data = await resp.json();
+      console.log(resp);
       if (data.success) {
         router.push("/sign-in");
-        toast.success("Account verified successfully!");
+        toast.success("Password updated successfully!");
       } else {
         toast.error(data.message);
       }
@@ -106,10 +116,14 @@ const Page = () => {
   const [email, setEmail] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [type, setType] = useState("password");
   return (
     <ScrollParallax isAbsolutelyPositioned>
       <section className="h-screen z-50 relative w-full px-32 flex flex-row items-center justify-center">
-        <form onSubmit={onSubmitSign} className="mx-auto w-1/4 space-y-6 h-max">
+        <form
+          onSubmit={onSubmitSign}
+          className="mx-auto w-full sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3 space-y-6 h-max"
+        >
           <Link
             href={"/"}
             className="flex cursor-pointer items-center gap-1 px-4"
@@ -142,9 +156,19 @@ const Page = () => {
             )
           )}
           {isVerified && codeSent && (
-            <div>
+            <div className="relative">
+              {passwords.newPassword.length > 0 && (
+                <button
+                  onClick={() =>
+                    setType(type === "password" ? "text" : "password")
+                  }
+                  className="absolute top-[20px] right-4"
+                >
+                  {type === "text" ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              )}
               <CustomInput
-                type="password"
+                type={type}
                 hint={"New Password"}
                 // label={"Login Id"}
                 name={"newPassword"}
@@ -152,7 +176,7 @@ const Page = () => {
                 handler={onChangeHandler}
               />
               <CustomInput
-                type="password"
+                type={type}
                 hint={"Confirm Password"}
                 // label={"Login Id"}
                 name={"confirmPassword"}
@@ -171,12 +195,12 @@ const Page = () => {
               >
                 Incorrect email?
               </button>
-              <Link
-                href={"/forgot-password"}
+              <button
+                onClick={handleEmailCode}
                 className="block w-max text-xs text-color-1 !mt-2"
               >
                 Resend code?
-              </Link>
+              </button>
             </div>
           )}
           <div className="flex flex-col gap-4">
@@ -212,6 +236,12 @@ const Page = () => {
               </Button>
             )}
           </div>
+          <p className="text-center text-sm">
+            Remember password?{" "}
+            <Link href={"/sign-in"} className="text-color-1">
+              Sign In
+            </Link>
+          </p>
         </form>
       </section>
       <BackgroundCircles />

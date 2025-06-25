@@ -19,16 +19,6 @@ export async function POST(req: NextResponse) {
 
     const receivingUser = await Account.findOne({ accountNumber: account });
     const sendingUser = await Account.findOne({ accountId: id });
-
-    const tt = await Transaction.create({
-      userId: id,
-      name: sender,
-      email,
-      amount,
-      senderAcc: sendingUser.accountNumber,
-      receiverAcc: receivingUser.accountNumber,
-    });
-
     if (!receivingUser) {
       return NextResponse.json(
         { success: false, message: "Receiving user not found" },
@@ -41,6 +31,7 @@ export async function POST(req: NextResponse) {
         { status: 400 }
       );
     }
+
     if (sendingUser.balancePkr < 0) {
       return NextResponse.json(
         {
@@ -50,6 +41,22 @@ export async function POST(req: NextResponse) {
         { status: 400 }
       );
     }
+
+    if (sendingUser.balancePkr < amount) {
+      return NextResponse.json({
+        success: false,
+        message: "You don't have enough balance!",
+      });
+    }
+
+    const tt = await Transaction.create({
+      userId: id,
+      name: sender,
+      email,
+      amount,
+      senderAcc: sendingUser.accountNumber,
+      receiverAcc: receivingUser.accountNumber,
+    });
 
     receivingUser.balancePkr += parseFloat(amount);
     sendingUser.balancePkr -= parseFloat(amount);

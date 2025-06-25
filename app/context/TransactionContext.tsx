@@ -190,7 +190,9 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
-        const username = session?.user?.username;
+        const fastSession = await getSession();
+        const username = fastSession?.user?.username;
+        console.log(username)
         const transactionHash = await transactionsContract.addToBlockchain(
           addressTo,
           parsedAmount,
@@ -204,6 +206,7 @@ export const TransactionsProvider = ({ children }) => {
 
         await transactionHash.wait();
         console.log(`Success - ${transactionHash.hash}`);
+        toast.success(`Transaction Successful`);
         setIsLoading(false);
 
         const transactionsCount =
@@ -226,8 +229,8 @@ export const TransactionsProvider = ({ children }) => {
     message = "Conversion to Pkr"
   ) => {
     try {
-        if (typeof window === "undefined") return null;
-  const { ethereum } = window;
+      if (typeof window === "undefined") return null;
+      const { ethereum } = window;
       toast.info("Converting!");
       if (ethereum) {
         const accounts = await ethereum.request({ method: "eth_accounts" });
@@ -254,7 +257,8 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
-        const username = session?.user?.username;
+        const fastSession = await getSession();
+        const username = fastSession?.user.username;
         const transactionHash = await transactionsContract.addToBlockchain(
           process.env.NEXT_PUBLIC_BANK_WALLET!,
           parsedAmount,

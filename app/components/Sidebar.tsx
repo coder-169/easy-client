@@ -12,8 +12,15 @@ import { signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import Button from "./CustomButton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FaUser } from "react-icons/fa";
 
-const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: (open: boolean) => void }) => {
+const Sidebar = ({
+  mobile,
+  setMobileOpen,
+}: {
+  mobile?: boolean;
+  setMobileOpen?: (open: boolean) => void;
+}) => {
   const pathname = usePathname();
   const { status, data: session } = useSession();
 
@@ -24,10 +31,14 @@ const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: 
   };
 
   return (
-    <div className={`border-r border-n-6 flex justify-between bg-n-8 flex-col h-full ${mobile ? 'w-64 p-4' : 'p-6'}`}>
+    <div
+      className={`border-r border-n-6 flex justify-between bg-n-8 flex-col h-full ${
+        mobile ? "w-64 p-4" : "p-6"
+      }`}
+    >
       {/* Close button for mobile */}
       {mobile && (
-        <button 
+        <button
           onClick={() => setMobileOpen?.(false)}
           className="self-end p-2 mb-4"
         >
@@ -35,17 +46,35 @@ const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: 
         </button>
       )}
 
-      <Link href={"/"} className="my-4 md:my-12 block mx-auto" onClick={handleLinkClick}>
-        <h3 className="text-2xl md:text-4xl text-n-1 font-bold">Easy <span className="text-color-1">Krypt</span></h3>
+      <Link
+        href={"/"}
+        className="my-4 md:my-12 block mx-auto"
+        onClick={handleLinkClick}
+      >
+        <h3 className="text-2xl md:text-4xl text-n-1 font-bold">
+          Easy <span className="text-color-1">Krypt</span>
+        </h3>
       </Link>
 
       <nav className="flex-1">
         <ul>
           {[
             { href: "/", icon: <FiHome />, text: "Home" },
-            { href: "/transfer", icon: <FaMoneyBillTransfer />, text: "Transfer" },
-            { href: "/convert", icon: <PiArrowsCounterClockwiseFill />, text: "Convert to PKR" },
-            { href: "/transactions", icon: <LiaMoneyBillSolid />, text: "Transactions" },
+            {
+              href: "/transfer",
+              icon: <FaMoneyBillTransfer />,
+              text: "Transfer",
+            },
+            {
+              href: "/convert",
+              icon: <PiArrowsCounterClockwiseFill />,
+              text: "Convert to PKR",
+            },
+            {
+              href: "/transactions",
+              icon: <LiaMoneyBillSolid />,
+              text: "Transactions",
+            },
             { href: "/profile", icon: <FiUser />, text: "Profile" },
             { href: "/settings", icon: <FaGear />, text: "Settings" },
           ].map((item) => (
@@ -71,13 +100,17 @@ const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: 
       ) : status === "authenticated" ? (
         <div className="flex items-center justify-between mb-4 md:mb-8 gap-2">
           <div className="flex items-center gap-2">
-            <Image
-              width={40}
-              height={40}
-              src="/user.jpg"
-              className="rounded-full"
-              alt="User profile"
-            />
+            {session?.user?.avatar ? (
+              <Image
+                width={40}
+                height={40}
+                src={session?.user?.avatar}
+                className="rounded-full"
+                alt="User profile"
+              />
+            ) : (
+              <FaUser width={40} height={40} className="text-white rounded-full" />
+            )}
             <Link href={"/profile"} onClick={handleLinkClick}>
               <h2 className="text-n-2 block text-sm">
                 {session?.user?.username}
@@ -99,7 +132,12 @@ const Sidebar = ({ mobile, setMobileOpen }: { mobile?: boolean, setMobileOpen?: 
         </div>
       ) : (
         <div className="pb-6 md:pb-12 mx-auto w-full px-2">
-          <Button href="/sign-in" className="w-full" white onClick={handleLinkClick}>
+          <Button
+            href="/sign-in"
+            className="w-full"
+            white
+            onClick={handleLinkClick}
+          >
             Sign In
           </Button>
         </div>

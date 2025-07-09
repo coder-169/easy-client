@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import Logo from "@/app/components/Logo";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -49,7 +48,7 @@ const SignIn = () => {
           }
         })
         .catch((err) => {
-          toast.error("Invalid Credentials");
+          toast.error(err || "Invalid Credentials");
         });
     } catch (error) {
       toast.error("An error occurred while signing in. Please try again.");
@@ -65,17 +64,14 @@ const SignIn = () => {
           onSubmit={onSubmitSign}
           className="mx-auto w-full sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3 space-y-6 h-max"
         >
-          <Link
-            href={"/"}
-            className="flex cursor-pointer items-center gap-1 px-4"
-          >
+          <Link href={"/"} className="flex cursor-pointer items-center gap-1">
             {" "}
-            <h3 className="text-xl text-n-1 font-bold">
+            <h3 className="text-3xl text-n-1 font-bold">
               Easy
               <span className="text-color-1">Krypt</span>
             </h3>
           </Link>
-          <h3 className="text-3xl font-bold text">Sign In</h3>
+          <h3 className="text-2xl font-bold text">Sign In</h3>
           <CustomInput
             type="text"
             hint={"Enter your email or Username"}

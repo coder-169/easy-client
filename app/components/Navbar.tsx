@@ -1,17 +1,14 @@
 "use client";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
-
-import { brainwave } from "../assets";
 import { navigation } from "../constants";
 import MenuSvg from "../assets/svg/MenuSvg";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Button from "./CustomButton";
 import Image from "next/image";
 import { background } from "../assets";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { MdDashboardCustomize } from "react-icons/md";
 import { PiSignOutBold } from "react-icons/pi";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 
@@ -25,10 +22,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TransactionContext } from "../context/TransactionContext";
 
 function DropdownMenuDemo({
   avatar,

@@ -45,7 +45,7 @@ const TransactionsTablePkr = () => {
   }, []);
   return loading ? (
     <Skeleton className="w-full h-[40vh]" />
-  ) : (
+  ) : transactions.length > 0 ? (
     <Table className="rounded-lg">
       <TableHeader className="bg-n-7 text-n-2 !rounded-lg">
         <TableRow>
@@ -117,6 +117,10 @@ const TransactionsTablePkr = () => {
         })}
       </TableBody>
     </Table>
+  ) : (
+    <div className="flex h-64 flex-col items-center justify-center">
+      <h2 className="text-2xl font-semibold text-n-1">No Transactions</h2>
+    </div>
   );
 };
 

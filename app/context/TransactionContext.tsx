@@ -13,7 +13,12 @@ declare global {
   }
 }
 
-const {ethereum} = window;
+// const {ethereum} = window;
+let ethereum: any;
+if (typeof window !== "undefined") {
+  ethereum = window.ethereum;
+}
+
 
 const createEthereumContract = (ethereum: any, currentAccount: string) => {
 

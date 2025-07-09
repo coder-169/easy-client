@@ -9,8 +9,13 @@ import { TransactionContext } from "@/app/context/TransactionContext";
 import { getSession } from "next-auth/react";
 
 const Page = () => {
-  const { sendTransaction, isLoading, formData, handleChangeData } =
-    useContext(TransactionContext);
+  const {
+    sendTransaction,
+    isLoading,
+    formData,
+    handleChangeData,
+    currentAccount,
+  } = useContext(TransactionContext);
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState("eth");
   const [account, setAccount] = useState({
@@ -28,7 +33,6 @@ const Page = () => {
       const fastSession = await getSession();
       if (currency.toLowerCase() === "eth") {
         sendTransaction();
-        
       } else {
         setLoading(true);
         toast.info("Processing Transaction!");
@@ -267,7 +271,11 @@ const Page = () => {
             white
             loading={loading}
             disabled={
-              !account.email || !account.account || !account.amount || isLoading
+              !account.email ||
+              !account.account ||
+              !account.amount ||
+              isLoading ||
+              !currentAccount
             }
             onClick={handleTransfer}
             className="w-full md:w-1/4"

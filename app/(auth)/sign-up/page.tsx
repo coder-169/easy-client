@@ -157,7 +157,7 @@ const SingUp = () => {
           loading={isLoading}
         />
       ) : (
-        <Step3 state={user} loading={isLoading} />
+        <Step3 state={user}/>
       )}
     </section>
   );

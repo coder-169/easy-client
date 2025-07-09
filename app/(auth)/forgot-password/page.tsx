@@ -123,11 +123,12 @@ const Page = () => {
           onSubmit={onSubmitSign}
           className="mx-auto w-full sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3 space-y-6 h-max"
         >
-          <Link
-            href={"/"}
-            className="flex cursor-pointer items-center gap-1 px-4"
-          >
-            <Logo />
+            <Link href={"/"} className="flex cursor-pointer items-center gap-1">
+            {" "}
+            <h3 className="text-3xl text-n-1 font-bold">
+              Easy
+              <span className="text-color-1">Krypt</span>
+            </h3>
           </Link>
           <h3 className="text-3xl font-bold text">Forgot Password</h3>
           {codeSent && !isVerified ? (
@@ -155,7 +156,7 @@ const Page = () => {
             )
           )}
           {isVerified && codeSent && (
-            <div className="relative">
+            <div className="relative space-y-4">
               {passwords.newPassword.length > 0 && (
                 <button
                   onClick={() =>

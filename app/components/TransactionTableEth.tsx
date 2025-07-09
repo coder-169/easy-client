@@ -22,8 +22,10 @@ const TransactionsTableEth = () => {
     TransactionContext
   ) as any;
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    if (transactions) {
+      setLoading(false);
+    }
+  }, [transactions]);
   return loading ? (
     <Skeleton className="w-full h-[40vh]" />
   ) : transactions.length > 0 ? (

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useContext, useState } from "react";
 import { TransactionContext } from "@/app/context/TransactionContext";
 import DoughnutChart from "@/app/components/DoughnutChart";
 import AnimatedCounter from "@/app/components/AnimatedCounter";
@@ -10,6 +11,7 @@ import Button from "@/app/components/CustomButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { toast } from "sonner";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +19,7 @@ const Page = () => {
   const [ethToPkr, setEthToPkr] = useState("");
   const { data: session, status } = useSession();
   const [converting, setConverting] = useState(false);
-  const { convertToPkr } = useContext(TransactionContext);
+  const { convertToPkr } = useContext(TransactionContext) as any;
 
   const convert = async () => {
     try {
@@ -76,99 +78,102 @@ const Page = () => {
   };
 
   return (
-    <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
-      <Heading
-        title="Currency Conversion"
-        subtitle="Convert your Eth (Ethereum) to Pakistani Rupees or Pkr to Ethereum"
-      />
-
-      <div className="flex flex-col lg:flex-row my-8 md:my-16 lg:my-32 w-full gap-8">
-        {/* Conversion Form */}
-        <div className="w-full lg:w-3/5">
-          <form className="p-4 md:p-5 w-full lg:w-3/4 flex flex-col justify-start items-start">
-            <CustomInput
-              hint="1"
-              name="ethamount"
-              type="number"
-              handler={(e) => getData(e.target.value)}
-              label="Ethereum Amount"
-              value={ethAmount}
-              classes="mb-4 w-full"
-            />
-
-            {!isLoading ? (
+    <ProtectedRoute>
+      <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
+        <Heading
+          title="Currency Conversion"
+          subtitle="Convert your Eth (Ethereum) to Pakistani Rupees or Pkr to Ethereum"
+        />
+        <div className="flex flex-col lg:flex-row my-8 md:my-16 lg:my-32 w-full gap-8">
+          {/* Conversion Form */}
+          <div className="w-full lg:w-3/5">
+            <form className="p-4 md:p-5 w-full lg:w-3/4 flex flex-col justify-start items-start">
               <CustomInput
-                hint="681600"
-                name="pkr"
-                type="text"
-                readOnly
-                value={ethToPkr}
-                label="Pkr Amount"
-                classes="w-full"
+                hint="1"
+                name="ethamount"
+                type="number"
+                handler={(e: ChangeEvent<HTMLInputElement>) =>
+                  getData(e.target.value)
+                }
+                label="Ethereum Amount"
+                value={ethAmount}
+                classes="mb-4 w-full"
               />
-            ) : (
-              <Skeleton className="w-full h-[45px] mt-6" />
-            )}
 
-            <Button
-              loading={converting}
-              disabled={converting || !ethAmount}
-              onClick={convert}
-              white
-              className="mt-6 md:mt-8 w-full rounded-rounded"
-            >
-              {converting ? "Converting" : "Convert"}
-            </Button>
-          </form>
-        </div>
-
-        {/* Balance Card */}
-        {status === "loading" ? (
-          <Skeleton className="w-full lg:w-2/5 h-[175px] rounded-xl bg-n-7" />
-        ) : (
-          <div className="w-full lg:w-2/5 h-max rounded-2xl p-4 bg-n-7">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="w-28 sm:w-36">
-                <DoughnutChart
-                  amounts={[
-                    session?.user?.balanceEth,
-                    session?.user?.balancePkr,
-                  ]}
+              {!isLoading ? (
+                <CustomInput
+                  hint="681600"
+                  name="pkr"
+                  type="text"
+                  readOnly
+                  value={ethToPkr}
+                  label="Pkr Amount"
+                  classes="w-full"
                 />
-              </div>
+              ) : (
+                <Skeleton className="w-full h-[45px] mt-6" />
+              )}
 
-              <div className="flex-1">
-                <p className="text-gray-500 text-sm">Total Crypto Balance</p>
-                <div>
-                  <span className="text-lg md:text-xl font-semibold">
-                    <AnimatedCounter
-                      duration={1}
-                      amount={session?.user?.balanceEth}
-                      classes="text-white"
-                    />{" "}
-                    <span className="text-blue-400 text-sm">ETH</span>
-                  </span>
+              <Button
+                loading={converting}
+                disabled={converting || !ethAmount}
+                onClick={convert}
+                white
+                className="mt-6 md:mt-8 w-full rounded-rounded"
+              >
+                {converting ? "Converting" : "Convert"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Balance Card */}
+          {status === "loading" ? (
+            <Skeleton className="w-full lg:w-2/5 h-[175px] rounded-xl bg-n-7" />
+          ) : (
+            <div className="w-full lg:w-2/5 h-max rounded-2xl p-4 bg-n-7">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="w-28 sm:w-36">
+                  <DoughnutChart
+                    amounts={[
+                      session?.user?.balanceEth,
+                      session?.user?.balancePkr,
+                    ]}
+                  />
                 </div>
 
-                <div className="mt-4 sm:mt-8">
-                  <p className="text-gray-500 text-sm">Total PKR Balance</p>
+                <div className="flex-1">
+                  <p className="text-gray-500 text-sm">Total Crypto Balance</p>
                   <div>
                     <span className="text-lg md:text-xl font-semibold">
                       <AnimatedCounter
-                        duration={2}
-                        amount={session?.user?.balancePkr}
+                        duration={1}
+                        amount={session?.user?.balanceEth}
                         classes="text-white"
                       />{" "}
-                      <span className="text-blue-400 text-sm">PKR</span>
+                      <span className="text-blue-400 text-sm">ETH</span>
                     </span>
+                  </div>
+
+                  <div className="mt-4 sm:mt-8">
+                    <p className="text-gray-500 text-sm">Total PKR Balance</p>
+                    <div>
+                      <span className="text-lg md:text-xl font-semibold">
+                        <AnimatedCounter
+                          duration={2}
+                          amount={session?.user?.balancePkr}
+                          classes="text-white"
+                        />{" "}
+                        <span className="text-blue-400 text-sm">PKR</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

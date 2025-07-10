@@ -1,20 +1,15 @@
 "use client";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React from "react";
 import {
-  FiEdit,
   FiUser,
-  FiMail,
-  FiCreditCard,
-  FiCalendar,
-  FiLock,
+  FiCreditCard
 } from "react-icons/fi";
 import { SiEthereum } from "react-icons/si";
 import { FaMoneyBillWave } from "react-icons/fa";
 import Heading from "@/app/components/Heading";
 import Button from "@/app/components/CustomButton";
 import AnimatedCounter from "@/app/components/AnimatedCounter";
-import { toast } from "sonner";
 import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 
@@ -28,11 +23,7 @@ const ProfilePage = () => {
             title="My Profile"
             subtitle="View and manage your personal and account information"
           />
-          <Button
-            white
-            href="/settings"
-            className="flex items-center gap-2"
-          >
+          <Button white href="/settings" className="flex items-center gap-2">
             Edit Profile
           </Button>
         </div>
@@ -85,7 +76,7 @@ const ProfilePage = () => {
 
                   <div className="md:col-span-2">
                     <label className="text-sm text-n-3 mb-1 flex items-center gap-1">
-                   Email
+                      Email
                     </label>
                     <p className="bg-n-8 p-2 text-n-2 rounded-lg opacity-80">
                       {session?.user?.email}
@@ -94,7 +85,7 @@ const ProfilePage = () => {
 
                   <div>
                     <label className="text-sm text-n-3 mb-1 flex items-center gap-1">
-                     Date of Birth
+                      Date of Birth
                     </label>
                     <p className="bg-n-8 p-2 text-n-2 rounded-lg">
                       {new Date(session?.user?.dob).toLocaleDateString()}
@@ -136,7 +127,7 @@ const ProfilePage = () => {
                 </label>
                 <div className="bg-n-8 p-3 text-n-2 rounded-lg">
                   <AnimatedCounter
-                    amount={session?.user?.balanceEth}
+                    amount={parseFloat(session?.user?.balanceEth.toFixed(3))}
                     prefix="ETH "
                     classes="font-semibold"
                   />

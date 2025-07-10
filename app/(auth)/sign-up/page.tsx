@@ -75,6 +75,10 @@ const SingUp = () => {
       return false;
     }
 
+    if (user.password.length < 8) {
+      toast.error("Password should be not be less than 8 characters");
+      return false;
+    }
     if (user.password !== user.confirmPassword) {
       toast.error("Password not match");
       return false;
@@ -93,11 +97,11 @@ const SingUp = () => {
     // Check if under 18
     if (age < 18) {
       toast.error("You must be at least 18 years old");
-      return false 
+      return false;
     }
     if (issueDate > today) {
       toast.error("Issue date cannot be in the future");
-      return false 
+      return false;
     }
 
     // Calculate expiration date (10 years from issue)
@@ -107,7 +111,7 @@ const SingUp = () => {
     // Check if already expired
     if (expirationDate < today) {
       toast.error("Card has already expired!");
-      return false 
+      return false;
     }
     return true;
   };
@@ -157,7 +161,7 @@ const SingUp = () => {
           loading={isLoading}
         />
       ) : (
-        <Step3 state={user}/>
+        <Step3 state={user} />
       )}
     </section>
   );

@@ -8,7 +8,7 @@ declare type InputProps = {
   step?: string;
   readOnly?: boolean;
   classes?: string;
-  handler?: (e: any) => void;
+  handler?: (e: unknown) => void;
 };
 
 /* eslint-disable no-unused-vars */
@@ -205,11 +205,6 @@ declare interface AuthFormProps {
   type: "sign-in" | "sign-up";
 }
 
-declare interface BankDropdownProps {
-  accounts: Account[];
-  setValue?: UseFormSetValue<any>;
-  otherStyles?: string;
-}
 
 declare interface BankTabItemProps {
   account: Account;

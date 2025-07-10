@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
@@ -133,6 +134,8 @@ const Page = () => {
   };
 
   const updatePasswords = async () => {
+    if (passwords.newPass.length < 8)
+      return toast.error("New password must be at least 8 characters long");
     if (passwords.newPass !== passwords.confirmPass) {
       return toast.error("New passwords don't match");
     }

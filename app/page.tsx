@@ -1,6 +1,28 @@
-import { Footer, Navbar, Services, Welcome, } from "./components";
+import { Footer, Navbar, Services, Welcome } from "./components";
 import Benefits from "./components/Benefits";
 import ButtonGradient from "./components/ButtonGradient";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      _id: string;
+      username: string;
+      lastName: string;
+      accountNumber: string;
+      balanceEth: number;
+      balancePkr: number;
+      firstName: string;
+      name: string;
+      email: string;
+      role?: string; // add any custom fields you have
+      avatar?: string; // add any custom fields you have
+      cnic?: string; // add any custom fields you have
+      dob?: string; // add any custom fields you have
+      createdAt?: string; // add any custom fields you have
+      isVerified?: boolean; // add any custom fields you have
+    };
+  }
+}
 
 export default function Home() {
   return (
@@ -9,7 +31,7 @@ export default function Home() {
         <Navbar />
         <Welcome />
         <Benefits />
-        <Services/>
+        <Services />
         <Footer />
       </div>
 

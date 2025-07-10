@@ -1,14 +1,12 @@
 "use client";
 import Link from "next/link";
-import React, { FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 
 import { toast } from "sonner";
-import Logo from "@/app/components/Logo";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
 import { ScrollParallax } from "react-just-parallax";
 import { useRouter } from "next/navigation";
-import { getSession } from "next-auth/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Page = () => {
@@ -118,12 +116,12 @@ const Page = () => {
   const [type, setType] = useState("password");
   return (
     <ScrollParallax isAbsolutelyPositioned>
-      <section className="h-screen z-50 relative w-full px-32 flex flex-row items-center justify-center">
+      <section className="h-screen z-50 relative w-full px-4 md:px-16 lg:px-32 flex flex-row items-center justify-center">
         <form
           onSubmit={onSubmitSign}
           className="mx-auto w-full sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3 space-y-6 h-max"
         >
-            <Link href={"/"} className="flex cursor-pointer items-center gap-1">
+          <Link href={"/"} className="flex cursor-pointer items-center gap-1">
             {" "}
             <h3 className="text-3xl text-n-1 font-bold">
               Easy
@@ -138,7 +136,7 @@ const Page = () => {
               name={"code"}
               value={code}
               classes="text-center "
-              handler={(e) => {
+              handler={(e: ChangeEvent<HTMLInputElement>) => {
                 if (e.target.value.length > 6) return;
                 setCode(e.target.value);
               }}
@@ -151,30 +149,34 @@ const Page = () => {
                 // label={"Login Id"}
                 name={"username"}
                 value={email}
-                handler={(e) => setEmail(e.target.value)}
+                handler={(e: ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
               />
             )
           )}
           {isVerified && codeSent && (
             <div className="relative space-y-4">
-              {passwords.newPassword.length > 0 && (
-                <button
-                  onClick={() =>
-                    setType(type === "password" ? "text" : "password")
-                  }
-                  className="absolute top-[20px] right-4"
-                >
-                  {type === "text" ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              )}
-              <CustomInput
-                type={type}
-                hint={"New Password"}
-                // label={"Login Id"}
-                name={"newPassword"}
-                value={passwords.newPassword}
-                handler={onChangeHandler}
-              />
+              <div className="relative">
+                {passwords.newPassword.length > 0 && (
+                  <button
+                    onClick={() =>
+                      setType(type === "password" ? "text" : "password")
+                    }
+                    className="absolute top-[20px] right-4"
+                  >
+                    {type === "text" ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                )}
+                <CustomInput
+                  type={type}
+                  hint={"New Password"}
+                  // label={"Login Id"}
+                  name={"newPassword"}
+                  value={passwords.newPassword}
+                  handler={onChangeHandler}
+                />
+              </div>
               <CustomInput
                 type={type}
                 hint={"Confirm Password"}
@@ -253,9 +255,9 @@ const BackgroundCircles = () => {
   return (
     <>
       <div>
-        <div className="z-40 absolute top-1/2 left-1/2 w-[45rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2">
-          <div className="z-40 absolute top-1/2 left-1/2 w-[32rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="z-40 absolute top-1/2 left-1/2 w-[21rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="z-40 absolute top-1/2 left-1/2 w-[22rem] lg:w-[45rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2">
+          <div className="z-40 absolute top-1/2 left-1/2 w-[16rem] lg:w-[32rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="z-40 absolute top-1/2 left-1/2 w-[12rem] lg:w-[21rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         </div>{" "}
       </div>
       <div className="absolute top-[4.4rem] left-16 w-16 h-16 bg-gradient-to-b from-[#DD734F] to-[#1A1A32] rounded-full"></div>

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Button from "@/app/components/CustomButton";
 import CustomInput from "@/app/components/CustomInput";
@@ -39,10 +39,15 @@ const SignIn = () => {
         name: user.username,
         ...user,
       })
-        .then((dt) => {
+        .then(async (dt) => {
           if (dt?.ok) {
             toast.success("Logged in Successfully");
-            router.push("/");
+            const session = await getSession();
+            if (session?.user?.isVerified) {
+              router.push("/");
+            } else {
+              router.push("/sign-up/verify");
+            }
           } else {
             toast.error(dt?.error);
           }
@@ -93,7 +98,7 @@ const SignIn = () => {
               type === "password" ? (
                 <button
                   type="button"
-                  className="absolute top-6 right-4"
+                  className="absolute top-5 right-4"
                   onClick={() => setType("text")}
                 >
                   <FaEye className="text-sm" />
@@ -101,7 +106,7 @@ const SignIn = () => {
               ) : (
                 <button
                   type="button"
-                  className="absolute top-6 right-4"
+                  className="absolute top-5 right-4"
                   onClick={() => setType("password")}
                 >
                   <FaEyeSlash className="text-sm" />
@@ -151,9 +156,9 @@ const BackgroundCircles = () => {
   return (
     <>
       <div>
-        <div className="z-40 absolute top-1/2 left-1/2 w-[45rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2">
-          <div className="z-40 absolute top-1/2 left-1/2 w-[32rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="z-40 absolute top-1/2 left-1/2 w-[21rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="z-40 absolute top-1/2 left-1/2 w-[22rem] lg:w-[45rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2">
+          <div className="z-40 absolute top-1/2 left-1/2 w-[16rem] lg:w-[32rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="z-40 absolute top-1/2 left-1/2 w-[12rem] lg:w-[21rem] aspect-square border border-n-2/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         </div>{" "}
       </div>
       <div className="absolute top-[4.4rem] left-16 w-16 h-16 bg-gradient-to-b from-[#DD734F] to-[#1A1A32] rounded-full"></div>

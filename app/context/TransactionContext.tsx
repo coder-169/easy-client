@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { contractABI, contractAddress } from "../utils/constants";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { toast } from "sonner";
 
 export const TransactionContext = React.createContext({});
@@ -31,7 +31,6 @@ const createEthereumContract = (ethereum: any, currentAccount: string) => {
 };
 
 export const TransactionsProvider = ({ children }) => {
-  const { data: session } = useSession();
   const [formData, setformData] = useState({
     addressTo: "",
     amount: "",
@@ -150,6 +149,7 @@ export const TransactionsProvider = ({ children }) => {
         setCurrentAccount(accounts[0]);
         await checkIfWalletIsConnected(); // Refresh data after connection
       }
+      window.location.reload();
     } catch (error) {
       console.error("Wallet connection error:", error);
       toast.error(error.message);

@@ -178,11 +178,13 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
+        const username = (await getSession()).user?.username;
         const transactionHash = await transactionsContract.addToBlockchain(
           addressTo,
           parsedAmount,
           message,
-          keyword
+          keyword,
+          username || "Anonymous"
         );
 
         setIsLoading(true);
@@ -238,11 +240,14 @@ export const TransactionsProvider = ({ children }) => {
             },
           ],
         });
+        const username = (await getSession()).user?.username;
+
         const transactionHash = await transactionsContract.addToBlockchain(
           process.env.NEXT_PUBLIC_BANK_WALLET!,
           parsedAmount,
           message,
-          keyword
+          keyword,
+          username || "Anonymous"
         );
 
         setIsLoading(true);

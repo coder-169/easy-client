@@ -19,9 +19,7 @@ if (typeof window !== "undefined") {
   ethereum = window.ethereum;
 }
 
-
 const createEthereumContract = (ethereum: any, currentAccount: string) => {
-
   try {
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner(currentAccount);
@@ -202,7 +200,7 @@ export const TransactionsProvider = ({ children }) => {
         console.log("No ethereum object");
       }
     } catch (error) {
-      throw new Error("No ethereum object");
+      throw new Error(error.message);
     }
   };
   const convertToPkr = async (
@@ -262,7 +260,7 @@ export const TransactionsProvider = ({ children }) => {
         return false;
       }
     } catch (error) {
-      throw new Error("No ethereum object");
+      throw new Error(error.message);
     }
   };
 

@@ -82,7 +82,7 @@ const Page = () => {
       <div className="my-12 mx-2 sm:mx-4 md:mx-8 lg:mx-16">
         <Heading
           title="Currency Conversion"
-          subtitle="Convert your Eth (Ethereum) to Pakistani Rupees or Pkr to Ethereum"
+          subtitle="Convert your Eth (Ethereum) to Pkr"
         />
         <div className="flex flex-col lg:flex-row my-8 md:my-16 lg:my-32 w-full gap-8">
           {/* Conversion Form */}

@@ -237,7 +237,15 @@ const Page = () => {
                       </label>
                       <div className="mt-2 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-x-3">
                         <div className="flex-shrink-0">
-                          {session?.user?.avatar ? (
+                          {avatarPreview ? (
+                            <Image
+                              src={avatarPreview}
+                              alt="Profile"
+                              width={192}
+                              height={192}
+                              className="h-32 w-32 md:h-48 md:w-48 rounded-full object-cover"
+                            />
+                          ) : session?.user?.avatar ? (
                             <>
                               <label
                                 htmlFor="avatar-upload"
@@ -259,14 +267,6 @@ const Page = () => {
                                 onChange={handleAvatarChange}
                               />
                             </>
-                          ) : avatarPreview ? (
-                            <Image
-                              src={avatarPreview}
-                              alt="Profile"
-                              width={192}
-                              height={192}
-                              className="h-32 w-32 md:h-48 md:w-48 rounded-full object-cover"
-                            />
                           ) : (
                             <div className="h-32 w-32 md:h-48 md:w-48 rounded-full bg-gray-300 flex items-center justify-center">
                               <label

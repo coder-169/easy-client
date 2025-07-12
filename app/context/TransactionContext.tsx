@@ -55,19 +55,16 @@ export const TransactionsProvider = ({ children }) => {
     }));
   };
 
-  const getAllTransactions = async () => {
-    if (!currentAccount) return;
+  const getAllTransactions = async (acc: string) => {
+    if (!acc) return;
 
     try {
       if (!ethereum) {
         console.log("Ethereum provider not found");
         return;
       }
-
-      const transactionsContract = createEthereumContract(
-        ethereum,
-        currentAccount
-      );
+      console.log("Fetching transactions...");
+      const transactionsContract = createEthereumContract(ethereum, acc);
       if (!transactionsContract) {
         console.log("Contract not initialized");
         return;
@@ -87,7 +84,7 @@ export const TransactionsProvider = ({ children }) => {
           amount: parseInt(transaction.amount._hex) / 10 ** 18,
         })
       );
-
+      console.log("Transactions fetched:", structuredTransactions);
       setTransactions(structuredTransactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
@@ -96,6 +93,7 @@ export const TransactionsProvider = ({ children }) => {
   };
 
   const checkIfWalletIsConnected = async () => {
+    console.log("cnt");
     try {
       if (!ethereum) {
         toast.warning("Please install MetaMask.");
@@ -128,7 +126,7 @@ export const TransactionsProvider = ({ children }) => {
       }
 
       setCurrentAccount(accounts[0]);
-      await getAllTransactions();
+      await getAllTransactions(accounts[0]);
     } catch (error) {
       console.error("Wallet connection error:", error);
       toast.error(error.message);
@@ -157,13 +155,18 @@ export const TransactionsProvider = ({ children }) => {
   };
 
   const sendTransaction = async () => {
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    if (!accounts || accounts.length === 0) {
+      toast.error("Please connect your wallet first.");
+      return;
+    }
     try {
       toast.info("Transaction Processed!");
       if (ethereum) {
         const { addressTo, amount, keyword, message } = formData;
         const transactionsContract = createEthereumContract(
           ethereum,
-          currentAccount
+          accounts[0]
         );
         const parsedAmount = ethers.utils.parseEther(amount);
 
@@ -171,7 +174,7 @@ export const TransactionsProvider = ({ children }) => {
           method: "eth_sendTransaction",
           params: [
             {
-              from: currentAccount,
+              from: accounts[0],
               to: addressTo,
               gas: "0x5208",
               value: parsedAmount._hex,
@@ -233,7 +236,7 @@ export const TransactionsProvider = ({ children }) => {
           method: "eth_sendTransaction",
           params: [
             {
-              from: currentAccount,
+              from: accounts[0],
               to: process.env.NEXT_PUBLIC_BANK_WALLET!,
               gas: "0x5208",
               value: parsedAmount._hex,
